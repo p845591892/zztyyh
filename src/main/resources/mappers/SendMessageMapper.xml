@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.gnz48.zzt.dao.SendMessageDao">
+	
+	<select id="findMoDianCommentByProjectId" parameterType="java.util.Map" resultType="com.gnz48.zzt.entity.modian.MoDianComment">
+		SELECT DISTINCT
+			t.user_name uname,
+			ROUND(SUM(t.backer_money), 2) backerMoney
+		FROM
+			t_modian_comment t
+		WHERE
+			t.project_id = #{id}
+		GROUP BY
+			t.user_id
+		ORDER BY
+			SUM(t.backer_money) DESC
+		LIMIT #{limit}
+	</select>
+</mapper>

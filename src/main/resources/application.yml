@@ -1,0 +1,50 @@
+server:
+  port: 1029
+spring:
+  application:
+    name: gnz48-zzt-yyh
+  datasource:
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,log4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://${ip}:3306/zztyyh?useUnicode=true&characterEncoding=utf8
+    username: ${username}
+    password: ${password}
+  jpa:
+    database: mysql
+    hibernate.ddl-auto: none
+    show-sql: false
+  thymeleaf:
+    prefix: classpath:/templates/
+    mode: LEGACYHTML5
+    cache: false
+    content-type: text/html; charset=utf-8
+  mail:
+    host: smtp.qq.com
+    username: ${username}
+    password: ${password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+mybatis:
+  type-aliases-package: com.gnz48.zzt.dao
+  mapper-locations: classpath:mappers/*Mapper.xml
+koudai48:
+  username: ${username}
+  password: ${password}
