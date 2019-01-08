@@ -1,4 +1,4 @@
-var username, password, checkPassword, nickname;// 注册信息变量
+var username, password, checkPassword, nickname, email;// 注册信息变量
 
 $(document).ready(function() {
 
@@ -19,7 +19,9 @@ $(document).ready(function() {
 			$("#checkPasswordMsg").html("");
 		} else if (inputName == "nickname") {
 			$("#nicknameMsg").html("");
-		}
+		}  else if (inputName == "email") {
+			$("#emailMsg").html("");
+		} 
 	});
 
 	/*
@@ -42,7 +44,10 @@ $(document).ready(function() {
 		} else if (inputName == "nickname") {
 			nickname = input.val();
 			validateNickname(input);
-		}
+		}  else if (inputName == "email") {
+			email = input.val();
+			validateEmail(input);
+		} 
 	});
 
 	/*
@@ -76,13 +81,14 @@ $(document).ready(function() {
 			data : {
 				"username" : username,
 				"password" : password,
-				"nickname" : nickname
+				"nickname" : nickname,
+				"email" : email
 			},
 			type : "post",
 			success : function(data) {
 				closeLoad();
 				if (data.status == 200) {
-					layer.confirm("注册成功，是否去登录？", {
+					layer.confirm("注册成功，请注意查收邮件", {
 						icon : 6,
 						title : '提示'
 					}, function(index, layero) {
@@ -171,4 +177,21 @@ function validateNickname(doc) {
 	} else {
 		doc.addClass("success-input");
 	}
+}
+
+/*
+ * 验证邮箱
+ */
+function validateEmail(doc) {
+	if (email == null || email.trim() == "") {
+		doc.addClass("error-input");
+		$("#emailMsg").html("昵称不能为空");
+	}
+	var re = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/; 
+    if (re.test(email)) {
+    	doc.addClass("success-input");
+    } else {
+    	doc.addClass("error-input");
+		$("#emailMsg").html("邮箱格式不正确");
+    }
 }

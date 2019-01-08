@@ -276,7 +276,6 @@ public class SystemManageService {
 		permission.setResourceType(vo.getResourceType());
 		permission.setUrl(vo.getUrl());
 		try {
-			System.out.println(vo.toString());
 			permissionRepository.save(permission);
 			return 1;
 		} catch (Exception e) {

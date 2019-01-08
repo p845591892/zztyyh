@@ -20,6 +20,7 @@ import com.gnz48.zzt.repository.QuartzConfigRepository;
  */
 @Service
 @Transactional
+@Deprecated
 public class ScheduleRefreshService {
 
 	private Logger log = LoggerFactory.getLogger(ScheduleRefreshService.class);

@@ -19,6 +19,8 @@ public class UserVO {
 
 	private String salt;// 加密密码的盐
 
+	private String email;// 邮箱
+
 	private byte state;
 
 	public Long getId() {
@@ -59,6 +61,14 @@ public class UserVO {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public byte getState() {

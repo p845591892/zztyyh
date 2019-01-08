@@ -27,6 +27,7 @@ import com.gnz48.zzt.entity.system.User;
 import com.gnz48.zzt.exception.shiro.ActivationAccountException;
 import com.gnz48.zzt.repository.system.UserRepository;
 import com.gnz48.zzt.service.WebService;
+import com.gnz48.zzt.util.MathUtil;
 import com.gnz48.zzt.util.StringUtil;
 
 /**
@@ -232,7 +233,7 @@ public class WebApi {
 		if (projectIds != null && !projectIds.equals("")) {
 			String[] ids = projectIds.split(",");
 			for (int i = 0; i < ids.length; i++) {
-				if (!StringUtil.isNumeric(ids[i])) {
+				if (!MathUtil.isNumeric(ids[i])) {
 					mav.addObject("projectNames", null);
 					mav.addObject("detailsTable", null);
 					mav.addObject("msg", "查询ID填写错误");

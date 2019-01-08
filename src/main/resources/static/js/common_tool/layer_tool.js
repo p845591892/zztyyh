@@ -30,7 +30,7 @@ function layerMsg(status, msg) {
 /* 开启加载层 */
 function openLoad() {
 	layerLoad = layer.load(0, {
-		time : 45 * 1000
+		time : 120 * 1000
 	});
 }
 

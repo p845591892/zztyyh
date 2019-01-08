@@ -17,6 +17,7 @@ import java.util.Map;
  *        ---------------------------------------------------------*
  * 
  */
+@Deprecated
 public class Rule {
 
 	/**

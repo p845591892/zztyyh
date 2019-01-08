@@ -223,6 +223,9 @@ public class Mail {
 			}
 
 			javaMailSender.send(mimeMessage);
+			
+			log.info("成功发送一条模板邮件到{}", to);
+
 		}
 
 	}

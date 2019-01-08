@@ -15,6 +15,7 @@ package com.gnz48.zzt.jsoup;
  * ---------------------------------------------------------*
  * 
  */
+@Deprecated
 public class LinkTypeData {
 
 	private int id;

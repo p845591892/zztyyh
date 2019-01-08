@@ -43,6 +43,12 @@ public class User {
 	private byte state;// 用户状态,0:创建未认证（比如没有激活，没有输入验证码等等）--等待验证的用户 ,
 						// 1:正常状态,2：用户被锁定.
 
+	@Column(name = "EMAIL_CAPTCHA", length = 20)
+	private String emailCaptcha;// 电子邮箱的验证码
+
+	@Column(name = "EMAIL", length = 100)
+	private String email;// 电子邮箱
+
 	@ManyToMany(fetch = FetchType.EAGER) // 立即从数据库中进行加载数据;
 	@JoinTable(name = "t_sys_user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
@@ -94,6 +100,22 @@ public class User {
 
 	public void setState(byte state) {
 		this.state = state;
+	}
+
+	public String getEmailCaptcha() {
+		return emailCaptcha;
+	}
+
+	public void setEmailCaptcha(String emailCaptcha) {
+		this.emailCaptcha = emailCaptcha;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public List<Role> getRoles() {

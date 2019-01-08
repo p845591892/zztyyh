@@ -1,8 +1,6 @@
 package com.gnz48.zzt.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 
@@ -14,7 +12,7 @@ import org.apache.shiro.util.ByteSource;
  * @author JuFF_白羽
  * @date 2018年7月11日 下午9:08:31
  */
-public class StringUtil {
+public class StringUtil extends StringUtils{
 
 	/**
 	 * @Title: removeNonBmpUnicode
@@ -95,57 +93,41 @@ public class StringUtil {
 		return hash.toString();
 	}
 
-	/**
-	 * @Description: 判断字符串是否是纯数字
-	 * @author JuFF_白羽
-	 * @param str
-	 *            待判断的字符串
-	 * @return boolean 是数字返回ture，否则返回false
-	 */
-	public static boolean isNumeric(String str) {
-		Pattern pattern = Pattern.compile("[0-9]*");
-		Matcher isNum = pattern.matcher(str);
-		if (!isNum.matches()) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * @Description: 指定字符串拼接数组，获得新的字符串
-	 *               <p>
-	 *               <blockquote>
-	 *               <table cellpadding=1 cellspacing=0 summary="Split examples
-	 *               showing regex and result">
-	 *               <tr>
-	 *               <th>Regex</th>
-	 *               <th>Array</th>
-	 *               <th>Result</th>
-	 *               </tr>
-	 *               <tr>
-	 *               <td align=center>d</td>
-	 *               <td>{ "ba", "an", "foo" }</td>
-	 *               <td>"badandfood"</td>
-	 *               </tr>
-	 *               </table>
-	 *               </blockquote>
-	 * @author JuFF_白羽
-	 * @param array
-	 *            拼接的数组
-	 * @param regex
-	 *            拼接使用的字符
-	 * @return String 返回连接好的字符串
-	 */
-	public static <T> String join(T[] array, String regex) {
-		String result = "";
-		for (int i = 0; i < array.length; i++) {
-			if (i + 1 < array.length) {
-				result = result + String.valueOf(array[i]) + regex;
-			} else {
-				result = result + String.valueOf(array[i]);
-			}
-		}
-		return result;
-	}
+//	/**
+//	 * @Description: 指定字符串拼接数组，获得新的字符串
+//	 *               <p>
+//	 *               <blockquote>
+//	 *               <table cellpadding=1 cellspacing=0 summary="Split examples
+//	 *               showing regex and result">
+//	 *               <tr>
+//	 *               <th>Regex</th>
+//	 *               <th>Array</th>
+//	 *               <th>Result</th>
+//	 *               </tr>
+//	 *               <tr>
+//	 *               <td align=center>d</td>
+//	 *               <td>{ "ba", "an", "foo" }</td>
+//	 *               <td>"badandfood"</td>
+//	 *               </tr>
+//	 *               </table>
+//	 *               </blockquote>
+//	 * @author JuFF_白羽
+//	 * @param array
+//	 *            拼接的数组
+//	 * @param regex
+//	 *            拼接使用的字符
+//	 * @return String 返回连接好的字符串
+//	 */
+//	public static <T> String join(T[] array, String regex) {
+//		String result = "";
+//		for (int i = 0; i < array.length; i++) {
+//			if (i + 1 < array.length) {
+//				result = result + String.valueOf(array[i]) + regex;
+//			} else {
+//				result = result + String.valueOf(array[i]);
+//			}
+//		}
+//		return result;
+//	}
 
 }
