@@ -109,6 +109,8 @@ public class ShiroConfig {
 		 * L--L微博用户列表
 		 */
 		filterChainDefinitionMap.put("/resource-management/weibo-table", "perms[weibo-table:url]");// 微博用户列表跳转url
+		filterChainDefinitionMap.put("/weibo/add", "perms[weibo:add]");// 新增监控的微博用户接口
+		filterChainDefinitionMap.put("/weibo/delete", "perms[weibo:delete]");// 删除监控的微博用户接口
 		filterChainDefinitionMap.put("/dynamic-monitor/add", "perms[dynamic-monitor:add]");// 新增微博动态监控接口
 		filterChainDefinitionMap.put("/dynamic-monitor/delete", "perms[dynamic-monitor:delete]");// 删除微博动态监控接口
 		/*

@@ -36,6 +36,24 @@ public class WeiboUser {
 	@Column(name = "CONTAINER_ID")
 	private Long containerId;
 
+	/**
+	 * 头像地址
+	 */
+	@Column(name = "AVATAR_HD", length = 500)
+	private String avatarHd;
+
+	/**
+	 * 关注数
+	 */
+	@Column(name = "FOLLOW_COUNT")
+	private Integer followCount;
+
+	/**
+	 * 粉丝数
+	 */
+	@Column(name = "FOLLOWERS_COUNT")
+	private Integer followersCount;
+
 	public Long getId() {
 		return id;
 	}
@@ -58,6 +76,36 @@ public class WeiboUser {
 
 	public void setContainerId(Long containerId) {
 		this.containerId = containerId;
+	}
+
+	public String getAvatarHd() {
+		return avatarHd;
+	}
+
+	public void setAvatarHd(String avatarHd) {
+		this.avatarHd = avatarHd;
+	}
+
+	public Integer getFollowCount() {
+		return followCount;
+	}
+
+	public void setFollowCount(Integer followCount) {
+		this.followCount = followCount;
+	}
+
+	public Integer getFollowersCount() {
+		return followersCount;
+	}
+
+	public void setFollowersCount(Integer followersCount) {
+		this.followersCount = followersCount;
+	}
+
+	@Override
+	public String toString() {
+		return "WeiboUser [id=" + id + ", userName=" + userName + ", containerId=" + containerId + ", avatarHd="
+				+ avatarHd + ", followCount=" + followCount + ", followersCount=" + followersCount + "]";
 	}
 
 }

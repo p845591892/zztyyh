@@ -133,6 +133,7 @@ $(document)
 										}
 									});
 
+					/* 点击头像弹窗 */
 					jQuery(".fancybox").fancybox();
 					$("select.styled").customSelect();
 

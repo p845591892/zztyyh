@@ -99,6 +99,12 @@ public class HttpsService {
 	private MoDianCommentRepository moDianCommentRepository;
 
 	/**
+	 * 微博用户表DAO组件
+	 */
+	@Autowired
+	private WeiboUserRepository weiboUserRepository;
+
+	/**
 	 * @Title: getToken
 	 * @Description: 发送登录请求，获取token参数。
 	 * @author JuFF_白羽
@@ -564,17 +570,80 @@ public class HttpsService {
 	}
 
 	/**
-	 * @Description: 获取完整的头像地址
+	 * @Description: 根据SOURCE_URL，获取完整的头像地址
 	 * @author JuFF_白羽
 	 * @param memberAvatar
-	 *            原头像地址
-	 * @return String 头像地址url
+	 *            原头像不完整的地址
+	 * @return String 完整的头像地址
 	 */
 	private String getAvatar(String memberAvatar) {
 		if (memberAvatar.indexOf("http://") == -1) {
 			memberAvatar = SOURCE_URL + memberAvatar;
 		}
 		return memberAvatar;
+	}
+
+	/**
+	 * @Description: 根据容器ID发送请求获取微博用户实体信息
+	 * @author JuFF_白羽
+	 * @param containerId
+	 *            容器ID
+	 * @return WeiboUser 微博用户
+	 */
+	public WeiboUser getWeiboUser(Long containerId) {
+		Https https = new Https();
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("containerid", String.valueOf(containerId));
+
+		Map<String, String> requestPropertys = new HashMap<String, String>();
+		requestPropertys.put("Accept", "application/json, text/plain, */*");
+		requestPropertys.put("User-Agent",
+				"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36");
+		requestPropertys.put("MWeibo-Pwa", "1");
+		requestPropertys.put("X-Requested-With", "XMLHttpRequest");
+		requestPropertys.put("Referer", "https://m.weibo.cn/p/" + String.valueOf(containerId));
+
+		String result = https.setDataType("GET").setUrl("https://m.weibo.cn/api/container/getIndex").setParams(params)
+				.setRequestProperty(requestPropertys).send();
+		JSONObject jsonObject = new JSONObject(result);
+
+		if (jsonObject.getInt("ok") == 1) {
+			JSONArray cards = jsonObject.getJSONObject("data").getJSONArray("cards");
+
+			for (int i = 0; i < cards.length(); i++) {
+				JSONObject card = cards.getJSONObject(i);
+
+				if (card.getInt("card_type") == 9) {
+					JSONObject user = card.getJSONObject("mblog").getJSONObject("user");
+
+					WeiboUser weiboUser = new WeiboUser();
+					weiboUser.setAvatarHd(user.getString("avatar_hd"));
+					weiboUser.setContainerId(containerId);
+					weiboUser.setFollowCount(user.getInt("follow_count"));
+					weiboUser.setFollowersCount(user.getInt("followers_count"));
+					weiboUser.setId(user.getLong("id"));
+					weiboUser.setUserName(user.getString("screen_name"));
+
+					return weiboUser;
+
+				} else {
+					continue;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @Description: 同步微博用户信息到最新
+	 * @author JuFF_白羽
+	 */
+	public void syncWeiboUser() {
+		List<WeiboUser> weiboUsers = weiboUserRepository.findAll();
+		for (WeiboUser weiboUser : weiboUsers) {
+			WeiboUser newWeiboUser = getWeiboUser(weiboUser.getContainerId());
+			weiboUserRepository.save(newWeiboUser);
+		}
 	}
 
 }

@@ -26,8 +26,7 @@ $(document).ready(function() {
 			title : "项目开始时间"
 		}, {
 			field : "endTime",
-			title : "项目结束时间",
-			order : "desc"
+			title : "项目结束时间"
 		}, {
 			field : "city",
 			title : "发起位置"

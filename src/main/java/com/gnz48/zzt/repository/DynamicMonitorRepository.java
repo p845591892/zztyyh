@@ -41,4 +41,15 @@ public interface DynamicMonitorRepository extends JpaRepository<DynamicMonitor, 
 	@Query("delete from DynamicMonitor t where t.communityId = ?1")
 	int deleteByCommunityId(long communityId);
 
+	/**
+	 * @Description: 删除监控微博对应的配置
+	 * @author JuFF_白羽
+	 * @param userId 微博用户ID
+	 * @return int 受影响的行数
+	 */
+	@Transactional
+	@Modifying
+	@Query("delete from DynamicMonitor t where t.userId = ?1")
+	int deleteByUserId(long userId);
+
 }

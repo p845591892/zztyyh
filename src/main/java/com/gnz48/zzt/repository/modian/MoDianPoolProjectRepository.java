@@ -44,4 +44,12 @@ public interface MoDianPoolProjectRepository extends JpaRepository<MoDianPoolPro
 	@Query("select count(t) from MoDianPoolProject t where t.status = ?1")
 	Integer countByStatus(String status);
 
+	/**
+	 * @Description: 根据项目结束时间降序获得摩点项目
+	 * @author JuFF_白羽
+	 * @return 摩点项目列表
+	 */
+	@Query("from MoDianPoolProject t order by t.endTime desc")
+	List<MoDianPoolProject> findOrderByEndTimeDesc();
+
 }

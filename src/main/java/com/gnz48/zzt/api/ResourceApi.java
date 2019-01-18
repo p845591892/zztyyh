@@ -144,7 +144,7 @@ public class ResourceApi {
 	public ResultVO getMoDianList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
-		result.setData(moDianPoolProjectRepository.findAll());
+		result.setData(moDianPoolProjectRepository.findOrderByEndTimeDesc());
 		return result;
 	}
 
@@ -180,7 +180,7 @@ public class ResourceApi {
 	public ResultVO getWeiboList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
-		result.setData(weiboUserRepository.findAll());
+		result.setData(weiboUserRepository.findOrderByFollowersCountDesc());
 		return result;
 	}
 

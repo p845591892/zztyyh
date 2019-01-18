@@ -32,11 +32,12 @@ public class SyncTask {
 
 	/**
 	 * @Title: syncMember
-	 * @Description: 定时任务：同步成员的信息
+	 * @Description: 定时任务：1.同步成员的信息； 2.同步微博用户信息。
 	 * @author JuFF_白羽
 	 */
 	public void syncMember() {
 		httpsService.syncMember();
+		httpsService.syncWeiboUser();
 	}
 
 	/**
