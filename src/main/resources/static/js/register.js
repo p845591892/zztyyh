@@ -88,7 +88,7 @@ $(document).ready(function() {
 			success : function(data) {
 				closeLoad();
 				if (data.status == 200) {
-					layer.confirm("注册成功，请注意查收邮件", {
+					layer.confirm(/*"注册成功，请注意查收邮件"*/"注册成功，请联系管理员激活账号", {
 						icon : 6,
 						title : '提示'
 					}, function(index, layero) {

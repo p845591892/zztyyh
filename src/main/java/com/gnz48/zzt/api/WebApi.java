@@ -331,5 +331,16 @@ public class WebApi {
 		mav.setViewName("register");
 		return mav;
 	}
+	
+	/**
+	 * @Description: 跳转到帮助
+	 * @author JuFF_白羽
+	 */
+	@GetMapping("/help")
+	public ModelAndView toHelp(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("help");
+		return mav;
+	}
 
 }
