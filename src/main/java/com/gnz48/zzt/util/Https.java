@@ -233,7 +233,6 @@ public class Https {
 			return json;
 		} finally {
 			is.close();
-			// System.out.println("同时 从这里也能看出 即便return了，仍然会执行finally的！");
 		}
 	}
 
@@ -289,8 +288,8 @@ public class Https {
 		try {
 			HttpURLConnection connection = null;
 			connection = (HttpsURLConnection) new URL(this.url).openConnection();
-			connection.setReadTimeout(5000);
-			connection.setConnectTimeout(5000);
+			connection.setReadTimeout(10000);
+			connection.setConnectTimeout(10000);
 			connection.setRequestMethod("GET");
 			if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
 				InputStream inputStream = connection.getInputStream();

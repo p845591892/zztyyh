@@ -606,30 +606,48 @@ public class HttpsService {
 		String result = https.setDataType("GET").setUrl("https://m.weibo.cn/api/container/getIndex").setParams(params)
 				.setRequestProperty(requestPropertys).send();
 		JSONObject jsonObject = new JSONObject(result);
+		
+		if (jsonObject.getInt("ok") == 1) {// 成功返回结果
+			JSONObject data = jsonObject.getJSONObject("data");
+			
+			if (data.has("cards")) {// cards情况的结果
+				JSONArray cards = data.getJSONArray("cards");
+				
+				for (int i = 0; i < cards.length(); i++) {
+					JSONObject card = cards.getJSONObject(i);
 
-		if (jsonObject.getInt("ok") == 1) {
-			JSONArray cards = jsonObject.getJSONObject("data").getJSONArray("cards");
+					if (card.getInt("card_type") == 9) {
+						JSONObject user = card.getJSONObject("mblog").getJSONObject("user");
 
-			for (int i = 0; i < cards.length(); i++) {
-				JSONObject card = cards.getJSONObject(i);
+						WeiboUser weiboUser = new WeiboUser();
+						weiboUser.setAvatarHd(user.getString("avatar_hd"));
+						weiboUser.setContainerId(containerId);
+						weiboUser.setFollowCount(user.getInt("follow_count"));
+						weiboUser.setFollowersCount(user.getInt("followers_count"));
+						weiboUser.setId(user.getLong("id"));
+						weiboUser.setUserName(user.getString("screen_name"));
 
-				if (card.getInt("card_type") == 9) {
-					JSONObject user = card.getJSONObject("mblog").getJSONObject("user");
-
-					WeiboUser weiboUser = new WeiboUser();
-					weiboUser.setAvatarHd(user.getString("avatar_hd"));
-					weiboUser.setContainerId(containerId);
-					weiboUser.setFollowCount(user.getInt("follow_count"));
-					weiboUser.setFollowersCount(user.getInt("followers_count"));
-					weiboUser.setId(user.getLong("id"));
-					weiboUser.setUserName(user.getString("screen_name"));
-
-					return weiboUser;
-
-				} else {
-					continue;
+						return weiboUser;
+					} else {
+						continue;
+					}
 				}
 			}
+			
+			if (data.has("userInfo")) {// userInfo情况的结果
+				JSONObject userInfo = data.getJSONObject("userInfo");
+				
+				WeiboUser weiboUser = new WeiboUser();
+				weiboUser.setAvatarHd(userInfo.getString("avatar_hd"));
+				weiboUser.setContainerId(containerId);
+				weiboUser.setFollowCount(userInfo.getInt("follow_count"));
+				weiboUser.setFollowersCount(userInfo.getInt("followers_count"));
+				weiboUser.setId(userInfo.getLong("id"));
+				weiboUser.setUserName(userInfo.getString("screen_name"));
+				
+				return weiboUser;
+			}
+
 		}
 		return null;
 	}

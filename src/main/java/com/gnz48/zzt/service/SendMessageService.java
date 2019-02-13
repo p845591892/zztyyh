@@ -107,13 +107,13 @@ public class SendMessageService {
 		StringBuffer sb = new StringBuffer();
 		sb.append("来自房间：");
 		sb.append(member.getRoomName());
-		sb.append("\n【话题】");
-		sb.append(member.getTopic());
+//		sb.append("\n【话题】");
+//		sb.append(member.getTopic());
 		sb.append("\n");
 		sb.append(roomMessage.getSenderName());
 		sb.append(" ");
 		sb.append(DateUtil.getDate(roomMessage.getMsgTime()));
-		sb.append("：");
+		sb.append(" ：\n");
 		sb.append(roomMessage.getMsgContent());
 		String message = sb.toString().replace("<br>", "\n");
 		Long roomId = member.getRoomId();
@@ -181,8 +181,8 @@ public class SendMessageService {
 					if (msgs != null && msgs.length >= 2) {
 						inputImages(msgs, robot);
 					}
-					// 等0.5秒
-					robot.delay(500);
+					// 等1秒
+					robot.delay(1000);
 					// 按下回车
 					KeyboardUtil.keyPress(robot, KeyEvent.VK_ENTER);
 				} else {
@@ -258,7 +258,7 @@ public class SendMessageService {
 					sb.append("集资了");
 					sb.append(comment.getBackerMoney());
 					sb.append("元，非常感谢您的支持。");
-					sb.append("\n\n-------当前集资总额前五位\n");
+					sb.append("\n\n-------当前集资项目总额前五位\n");
 					Map<String, Object> param = new HashMap<String, Object>();
 					param.put("id", project.getId());
 					param.put("limit", 5);
@@ -314,7 +314,7 @@ public class SendMessageService {
 				sb.append(modianPool.getRate());
 				sb.append("%\n项目结束时间：");
 				sb.append(DateUtil.getDate(modianPool.getEndTime()));
-				sb.append("\n\n-------当前集资总额前十位\n");
+				sb.append("\n\n-------当前集资项目总额前十位\n");
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("id", modianPool.getId());
 				param.put("limit", 10);
@@ -355,6 +355,7 @@ public class SendMessageService {
 	private void inputImages(String[] urls, Robot robot) {
 		Https https = new Https();
 		for (int i = 1; i < urls.length; i++) {// 0为文字部分，故从1开始
+			KeyboardUtil.keyPressString(robot, "\n");
 			String url = urls[i];
 			// 发送请求获取图片超类
 			Image image = https.setUrl(url).getImage();
