@@ -44,7 +44,7 @@ import com.gnz48.zzt.util.StringUtil;
 @Service
 @Transactional
 public class HttpsService {
-
+	
 	/**
 	 * 口袋48登录账号
 	 */
@@ -151,27 +151,28 @@ public class HttpsService {
 			msgContent.append(dataObject.getString("bodys"));
 			msgContent.append("]<br>");
 			msgContent.append(extInfoObject.getString("referenceTitle"));
-			msgContent.append(": ");
+			msgContent.append("：");
 			msgContent.append(extInfoObject.getString("referenceContent"));
-			msgContent.append("<br><img>");
+			msgContent.append("<img>");
 			msgContent.append(SOURCE_URL);
 			msgContent.append(extInfoObject.getString("referencecoverImage"));
 		} else if (messageObject.equals("faipaiText")) {
 			String nickName = getNameByFaipaiUserId(extInfoObject.getLong("faipaiUserId"));
 			msgContent.append("回复@");
 			msgContent.append(nickName);
-			msgContent.append(":");
+			msgContent.append("：");
 			msgContent.append(extInfoObject.getString("messageText"));
 			msgContent.append("<br>");
+			msgContent.append("----------<br>");
 			msgContent.append(nickName);
-			msgContent.append(":");
+			msgContent.append("：");
 			msgContent.append(extInfoObject.getString("faipaiContent"));
 		} else if (messageObject.equals("idolFlip")) {
 			msgContent.append("[");
 			msgContent.append(extInfoObject.getString("idolFlipTitle"));
 			msgContent.append("]<br>");
 			msgContent.append(extInfoObject.getString("idolFlipUserName"));
-			msgContent.append(":<br>");
+			msgContent.append("：<br>");
 			msgContent.append(extInfoObject.getString("idolFlipContent"));
 		} else if (messageObject.equals("audio")) {
 			msgContent.append("发送了一条[语音消息]，请到口袋房间查看。");
@@ -264,30 +265,32 @@ public class HttpsService {
 			String result = https.setDataType("GET").setUrl(url).setRequestProperty(requestPropertys).send();
 			JSONObject json = new JSONObject(result);
 			JSONObject data = json.getJSONObject("data");
-			JSONArray cards = data.getJSONArray("cards");
-			for (int i = 0; i < cards.length(); i++) {
-				JSONObject card = cards.getJSONObject(i);
-				int cardType = card.getInt("card_type");
-				if (cardType == 9) {// 当为本人发的微博时
-					JSONObject mblog = card.getJSONObject("mblog");
-					Dynamic oldDynamic = dynamicRepository.findOne(mblog.getLong("id"));
-					if (oldDynamic != null) {// 当该条动态存在数据库中时,判断是否置顶
-						if (mblog.has("title")) {// 若为置顶博，则结束本次循环
-							continue;
-						} else {// 否则结束循环
-							break;
+			if (data.has("cards")) {
+				JSONArray cards = data.getJSONArray("cards");
+				for (int i = 0; i < cards.length(); i++) {
+					JSONObject card = cards.getJSONObject(i);
+					int cardType = card.getInt("card_type");
+					if (cardType == 9) {// 当为本人发的微博时
+						JSONObject mblog = card.getJSONObject("mblog");
+						Dynamic oldDynamic = dynamicRepository.findOne(mblog.getLong("id"));
+						if (oldDynamic != null) {// 当该条动态存在数据库中时,判断是否置顶
+							if (mblog.has("title")) {// 若为置顶博，则结束本次循环
+								continue;
+							} else {// 否则结束循环
+								break;
+							}
 						}
+						Dynamic dynamic = new Dynamic();
+						dynamic.setCreatedAt(mblog.getString("created_at"));// 创建时间
+						dynamic.setId(mblog.getLong("id"));// 动态ID
+						dynamic.setWeiboContent(getWeiboContent(mblog));// 微博内容
+						JSONObject userObject = mblog.getJSONObject("user");
+						dynamic.setSenderName(userObject.getString("screen_name"));// 发送者姓名
+						dynamic.setUserId(userObject.getLong("id"));// 发送者ID
+						dynamic.setIsSend(1);// 是否已执行发送任务，默认为1否
+						dynamic.setSyncDate(new Date());// 同步时间
+						dynamicRepository.save(dynamic);
 					}
-					Dynamic dynamic = new Dynamic();
-					dynamic.setCreatedAt(mblog.getString("created_at"));// 创建时间
-					dynamic.setId(mblog.getLong("id"));// 动态ID
-					dynamic.setWeiboContent(getWeiboContent(mblog));// 微博内容
-					JSONObject userObject = mblog.getJSONObject("user");
-					dynamic.setSenderName(userObject.getString("screen_name"));// 发送者姓名
-					dynamic.setUserId(userObject.getLong("id"));// 发送者ID
-					dynamic.setIsSend(1);// 是否已执行发送任务，默认为1否
-					dynamic.setSyncDate(new Date());// 同步时间
-					dynamicRepository.save(dynamic);
 				}
 			}
 		}
@@ -303,17 +306,37 @@ public class HttpsService {
 	 */
 	private String getWeiboContent(JSONObject mblog) {
 		StringBuffer sb = new StringBuffer();
-		String text = StringUtil.removeNonBmpUnicode(mblog.getString("text")).replace("<br />", "\n");
-		Document doc = Jsoup.parse(text);
-		sb.append(doc.text().replace("\n", "<br>"));// 只获取文本
+		String text = null;
+		// 获取文本
+		if (mblog.has("raw_text")) {// 当有特殊行文本时直接取，而不去解析普通html文本
+			sb.append(StringUtil.removeNonBmpUnicode(mblog.getString("raw_text")));
+		} else {
+			text = StringUtil.removeNonBmpUnicode(mblog.getString("text")).replace("<br />", "$br$");
+			Document doc = Jsoup.parse(text);
+			sb.append(doc.text().replace("$br$", "<br>"));
+		}
+		
+		// 获取转发内容
+		if (mblog.has("retweeted_status")) {
+			sb.append("<br>----------");
+			sb.append("<br>转发@");
+			JSONObject retStat = mblog.getJSONObject("retweeted_status");
+			String retStatUserName = retStat.getJSONObject("user").getString("screen_name");
+			sb.append(retStatUserName);
+			sb.append("：<br>");
+			sb.append(getWeiboContent(retStat));
+		}
+		
+		// 获取图片
 		if (mblog.has("pics")) {
-			JSONArray pics = mblog.getJSONArray("pics");// 获取图片
+			JSONArray pics = mblog.getJSONArray("pics");
 			for (int i = 0; i < pics.length(); i++) {
 				JSONObject pic = pics.getJSONObject(i);
 				sb.append("<img>");
 				sb.append(pic.getString("url"));
 			}
 		}
+		
 		return sb.toString();
 	}
 
@@ -624,6 +647,7 @@ public class HttpsService {
 						weiboUser.setContainerId(containerId);
 						weiboUser.setFollowCount(user.getInt("follow_count"));
 						weiboUser.setFollowersCount(user.getInt("followers_count"));
+						System.out.println("粉丝数:" + user.getInt("followers_count"));
 						weiboUser.setId(user.getLong("id"));
 						weiboUser.setUserName(user.getString("screen_name"));
 
@@ -642,6 +666,7 @@ public class HttpsService {
 				weiboUser.setContainerId(containerId);
 				weiboUser.setFollowCount(userInfo.getInt("follow_count"));
 				weiboUser.setFollowersCount(userInfo.getInt("followers_count"));
+				System.out.println("粉丝数:" + userInfo.getInt("followers_count"));
 				weiboUser.setId(userInfo.getLong("id"));
 				weiboUser.setUserName(userInfo.getString("screen_name"));
 				

@@ -214,8 +214,6 @@ public class KeyboardUtil {
 		Images imgSel = new Images(image);
 		// 将图片放入剪切板
 		clip.setContents(imgSel, null);
-		// 等1秒
-		r.delay(1000);
 		// 按下Ctrl+V实现粘贴图片
 		keyPressWithCtrl(r, KeyEvent.VK_V);
 		// 等1秒

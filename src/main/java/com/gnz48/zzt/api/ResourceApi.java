@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gnz48.zzt.repository.QQCommunityRepository;
@@ -301,6 +302,19 @@ public class ResourceApi {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
 		result.setData(systemManageService.getSystemPermission(id, pid));
+		return result;
+	}
+	
+	/**
+	 * @Description: 获取同步的房间消息
+	 * @author JuFF_白羽
+	 */
+	@GetMapping("/room-message")
+	public ResultVO getRoomMessage(@RequestParam(defaultValue = "1") Integer pageNumber,
+			@RequestParam(defaultValue = "15") Integer pageSize) {
+		ResultVO result = new ResultVO();
+		result.setStatus(200);
+		result.setData(resourceManagementService.getRoomMessage(pageNumber, pageSize));
 		return result;
 	}
 

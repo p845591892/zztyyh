@@ -85,7 +85,7 @@ public class RegisterService {
 			user = userRepository.save(user);
 
 			// 发送邮件验证码
-			VelocityContext context = new VelocityContext();
+			/*VelocityContext context = new VelocityContext();
 			context.put("nickname", vo.getNickname());
 			context.put("username", vo.getUsername());
 
@@ -93,7 +93,7 @@ public class RegisterService {
 					+ "/register/activation?username=" + vo.getUsername() + "&emailCaptcha=" + emailCaptcha;
 
 			context.put("url", url);
-			Mail.sendTemplateMail("注册成功", "/templates/mail_template/register.vm", context, vo.getEmail());
+			Mail.sendTemplateMail("注册成功", "/templates/mail_template/register.vm", context, vo.getEmail());*/
 
 			return 1;
 		} catch (Exception e) {

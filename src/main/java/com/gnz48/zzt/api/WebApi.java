@@ -342,5 +342,16 @@ public class WebApi {
 		mav.setViewName("help");
 		return mav;
 	}
+	
+	/**
+	 * @Description: 跳转到可视化数据-口袋房间消息
+	 * @author JuFF_白羽
+	 */
+	@GetMapping("/data-visualization/room-message")
+	public ModelAndView toRoomMessage(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("data_visualization/room_message_table");
+		return mav;
+	}
 
 }

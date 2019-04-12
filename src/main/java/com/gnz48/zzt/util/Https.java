@@ -282,9 +282,11 @@ public class Https {
 	 * @Description: 根据图片网络地址,发送https请求获取一个Image对象
 	 * @author JuFF_白羽
 	 * @return Image 图形图像超类
+	 * @throws IOException 
 	 */
-	public Image getImage() {
+	public Image getImage() throws IOException {
 		validateRule(this.url);
+		InputStream inputStream = null;
 		try {
 			HttpURLConnection connection = null;
 			connection = (HttpsURLConnection) new URL(this.url).openConnection();
@@ -292,13 +294,17 @@ public class Https {
 			connection.setConnectTimeout(10000);
 			connection.setRequestMethod("GET");
 			if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
-				InputStream inputStream = connection.getInputStream();
+				inputStream = connection.getInputStream();
 				return ImageIO.read(inputStream);
 			} else {
 				log.info("请求网络图片失败：{}", connection.getResponseCode());
 			}
 		} catch (IOException e) {
 			log.info(e.toString());
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
 		}
 		return null;
 	}

@@ -1,5 +1,6 @@
 package com.gnz48.zzt.job;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +57,9 @@ public class SendToQQTask {
 	 *               2018-08-02更新：为了防止多任务调用windows窗口，于是需要将所有调用QQ窗口发送消息的功能写到同一个任务中。
 	 *               这里是新增发送微博动态到QQ窗口中，并将动态状态修改为2（已执行过发送任务）。
 	 * @author JuFF_白羽
+	 * @throws IOException 
 	 */
-	public void sendMessage() {
+	public void sendMessage() throws IOException {
 		/* 获取口袋房间消息，发送到QQ */
 		List<Member> members = memberRepository.findByRoomMonitor(1);// 获取房间监控开启的成员信息
 		if (members != null) {
@@ -85,8 +87,9 @@ public class SendToQQTask {
 	/**
 	 * @Description: 每日09:00和17:00发送当前总结消息到指定QQ
 	 * @author JuFF_白羽
+	 * @throws IOException 
 	 */
-	public void sendDaySummarize() {
+	public void sendDaySummarize() throws IOException {
 		/* 获取摩点众筹中的项目状况，发送到QQ */
 		sendMessageService.sendModianPool();
 	}

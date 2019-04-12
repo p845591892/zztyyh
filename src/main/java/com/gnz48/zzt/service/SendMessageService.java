@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,8 +103,9 @@ public class SendMessageService {
 	 *            口袋房间消息对象
 	 * @param member
 	 *            成员信息
+	 * @throws IOException 
 	 */
-	public void sendRoomMessage(RoomMessage roomMessage, Member member) {
+	public void sendRoomMessage(RoomMessage roomMessage, Member member) throws IOException {
 		StringBuffer sb = new StringBuffer();
 		sb.append("来自房间：");
 		sb.append(member.getRoomName());
@@ -113,7 +115,7 @@ public class SendMessageService {
 		sb.append(roomMessage.getSenderName());
 		sb.append(" ");
 		sb.append(DateUtil.getDate(roomMessage.getMsgTime()));
-		sb.append(" ：\n");
+		sb.append("\n");
 		sb.append(roomMessage.getMsgContent());
 		String message = sb.toString().replace("<br>", "\n");
 		Long roomId = member.getRoomId();
@@ -153,9 +155,10 @@ public class SendMessageService {
 	 *             为非必填参数，可为空，用于记录日志。
 	 * @author: JuFF_白羽
 	 * @throws AWTException
+	 * @throws IOException 
 	 * @date: 2018年7月15日 上午2:36:11
 	 */
-	private int sendQQMessage(String message, Long communityId, String communityName) throws AWTException {
+	private int sendQQMessage(String message, Long communityId, String communityName) throws AWTException, IOException {
 		int i = 2;// 发送成功返回2，失败返回1
 		WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, communityName); // 第一个参数是Windows窗体的窗体类，第二个参数是窗体的标题。不熟悉windows编程的需要先找一些Windows窗体数据结构的知识来看看，还有windows消息循环处理，其他的东西不用看太多。
 		if (hwnd == null) {
@@ -173,16 +176,16 @@ public class SendMessageService {
 						msgs = message.split("<img>");// 分割
 						message = msgs[0];// 图片都在正文后，因此第一条一定是正文
 					}
-					// 等3秒
-					robot.delay(3000);
+					// 等5秒
+					robot.delay(5000);
 					// 输入文字内容
 					KeyboardUtil.keyPressString(robot, message);
 					// 输入图片内容
 					if (msgs != null && msgs.length >= 2) {
 						inputImages(msgs, robot);
 					}
-					// 等1秒
-					robot.delay(1000);
+					// 等3秒
+					robot.delay(3000);
 					// 按下回车
 					KeyboardUtil.keyPress(robot, KeyEvent.VK_ENTER);
 				} else {
@@ -201,9 +204,10 @@ public class SendMessageService {
 	 * @Title: sendWeiboDynamic
 	 * @Description: 向指定的QQ发送微博动态
 	 * @author JuFF_白羽
+	 * @throws IOException 
 	 * @throws AWTException
 	 */
-	public void sendWeiboDynamic() {
+	public void sendWeiboDynamic() throws IOException {
 		List<Dynamic> dynamics = dynamicRepository.findByIsSendOrderBySyncDateAsc(1);
 		if (dynamics != null) {
 			for (Dynamic dynamic : dynamics) {
@@ -236,9 +240,10 @@ public class SendMessageService {
 	 * @Title: sendMoDianComment
 	 * @Description: 向指定QQ发送摩点评论
 	 * @author JuFF_白羽
+	 * @throws IOException 
 	 * @throws AWTException
 	 */
-	public void sendMoDianComment() {
+	public void sendMoDianComment() throws IOException {
 		List<MoDianCommentVO> commentVOs = moDianCommentRepository.findMoDianCommentAndMoDianPoolProjectBySendQQ(1);
 		if (commentVOs != null) {
 			for (MoDianCommentVO commentVO : commentVOs) {
@@ -254,7 +259,7 @@ public class SendMessageService {
 					sb.append(comment.getUname());
 					sb.append(" ");
 					sb.append(DateUtil.getDate(comment.getBackerDate(), "yyyy-MM-dd HH:mm"));
-					sb.append("：\n");
+					sb.append("\n");
 					sb.append("集资了");
 					sb.append(comment.getBackerMoney());
 					sb.append("元，非常感谢您的支持。");
@@ -295,9 +300,10 @@ public class SendMessageService {
 	 *               <p>
 	 *               其中还包括集资总额前5的排名。
 	 * @author JuFF_白羽
+	 * @throws IOException 
 	 * @throws AWTException
 	 */
-	public void sendModianPool() {
+	public void sendModianPool() throws IOException {
 		List<MoDianPoolProject> modianPools = moDianPoolProjectRepository.findByStatus("众筹中");
 		if (modianPools != null) {
 			for (MoDianPoolProject modianPool : modianPools) {
@@ -351,12 +357,13 @@ public class SendMessageService {
 	 *            Java的自动化系统输入事件对象
 	 * @param urls
 	 *            图片地址数组
+	 * @throws IOException 
 	 */
-	private void inputImages(String[] urls, Robot robot) {
+	private void inputImages(String[] urls, Robot robot) throws IOException {
 		Https https = new Https();
 		for (int i = 1; i < urls.length; i++) {// 0为文字部分，故从1开始
-			KeyboardUtil.keyPressString(robot, "\n");
 			String url = urls[i];
+			KeyboardUtil.keyPressString(robot, "\n");
 			// 发送请求获取图片超类
 			Image image = https.setUrl(url).getImage();
 			// 输入图片

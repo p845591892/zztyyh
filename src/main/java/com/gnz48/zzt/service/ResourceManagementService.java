@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.gnz48.zzt.dao.ResourceManagementDao;
 import com.gnz48.zzt.entity.QQCommunity;
+import com.gnz48.zzt.entity.snh48.RoomMessage;
 import com.gnz48.zzt.repository.CommentMonitorRepostiory;
 import com.gnz48.zzt.repository.DynamicMonitorRepository;
 import com.gnz48.zzt.repository.QQCommunityRepository;
@@ -14,6 +18,7 @@ import com.gnz48.zzt.repository.RoomMonitorRepository;
 import com.gnz48.zzt.vo.CommentMonitorVO;
 import com.gnz48.zzt.vo.DynamicMonitorVO;
 import com.gnz48.zzt.vo.RoomMonitorVO;
+import com.gnz48.zzt.vo.snh48.RoomMessageVO;
 
 /**
  * @ClassName: ResourceManagementService
@@ -48,6 +53,12 @@ public class ResourceManagementService {
 	 */
 	@Autowired
 	private DynamicMonitorRepository dynamicMonitorRepository;
+	
+	/**
+	 * 资源管理服务DAO组件
+	 */
+	@Autowired
+	private ResourceManagementDao resourceManagementDao;
 
 	/**
 	 * @Description: 获取成员房间的监控信息列表的HTML
@@ -294,6 +305,20 @@ public class ResourceManagementService {
 		sb.append("</div>");
 		sb.append("</form>");
 		return sb.toString();
+	}
+
+	/**
+	 * @Description: 分页获取口袋房间消息
+	 * @author JuFF_白羽
+	 * @param pageNumber 当前页数
+	 * @param pageSize 每页数据条数
+	 * @return PageInfo<RoomMessage> 返回PageInfo的口袋房间消息表
+	 */
+	public PageInfo<RoomMessageVO> getRoomMessage(Integer pageNumber, Integer pageSize) {
+		PageHelper.startPage(pageNumber, pageSize);
+		List<RoomMessageVO> roomMessages = resourceManagementDao.findRoomMessage();
+		PageInfo<RoomMessageVO> pageInfo = new PageInfo<RoomMessageVO>(roomMessages);
+		return pageInfo;
 	}
 
 }
