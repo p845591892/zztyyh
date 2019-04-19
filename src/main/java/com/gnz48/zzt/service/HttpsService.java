@@ -193,6 +193,7 @@ public class HttpsService {
 	 *               若为新增房间则给予默认的不监控状态(=2)。
 	 * @author JuFF_白羽
 	 */
+	@Deprecated
 	public void syncMember() {
 		Https https = new Https();
 		/* 获取成员信息 */
@@ -621,10 +622,8 @@ public class HttpsService {
 		Map<String, String> requestPropertys = new HashMap<String, String>();
 		requestPropertys.put("Accept", "application/json, text/plain, */*");
 		requestPropertys.put("User-Agent",
-				"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36");
-		requestPropertys.put("MWeibo-Pwa", "1");
+				"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
 		requestPropertys.put("X-Requested-With", "XMLHttpRequest");
-		requestPropertys.put("Referer", "https://m.weibo.cn/p/" + String.valueOf(containerId));
 
 		String result = https.setDataType("GET").setUrl("https://m.weibo.cn/api/container/getIndex").setParams(params)
 				.setRequestProperty(requestPropertys).send();

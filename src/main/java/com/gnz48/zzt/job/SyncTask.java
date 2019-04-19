@@ -36,7 +36,10 @@ public class SyncTask {
 	 * @author JuFF_白羽
 	 */
 	public void syncMember() {
-		httpsService.syncMember();
+		/* 
+		 *  接口已过时，无法再取得数据。
+		 *  httpsService.syncMember();
+		 */
 		httpsService.syncWeiboUser();
 	}
 
@@ -57,7 +60,10 @@ public class SyncTask {
 	 * @throws JSONException
 	 */
 	public void syncRoomMessage() throws JSONException, ParseException {
-		httpsService.syncRoomMessage();
+		/* 
+		 * 接口已过时，无法再取得数据。
+		 * httpsService.syncRoomMessage();
+		 */
 	}
 
 	/**
