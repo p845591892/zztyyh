@@ -98,11 +98,16 @@
 							class="fa fa-cogs"></i> <span>机器人配置</span>
 					</a>
 						<ul class="sub">
-							<li><a href="/resource-management/member-table">成员列表</a></li>
-							<li><a href="/resource-management/modian-table">摩点项目列表</a></li>
-							<li><a href="/resource-management/weibo-table">微博用户列表</a></li>
-							<li><a href="/resource-management/qq-table">QQ列表</a></li>
-							<li><a href="/resource-management/quartz-confing-table">轮询配置列表</a></li>
+							<li shiro:hasPermission="member-table:url">
+								<a href="/resource-management/member-table">成员列表</a></li>
+							<li shiro:hasPermission="modian-table:url">
+								<a href="/resource-management/modian-table">摩点项目列表</a></li>
+							<li shiro:hasPermission="weibo-table:url">
+								<a href="/resource-management/weibo-table">微博用户列表</a></li>
+							<li shiro:hasPermission="qq-table:url">
+								<a href="/resource-management/qq-table">QQ列表</a></li>
+							<li shiro:hasPermission="quartz-confing-table:url">
+								<a href="/resource-management/quartz-confing-table">轮询配置列表</a></li>
 						</ul></li>
 					<li class="sub-menu"><a class="active" href="javascript:;">
 							<i class="fa fa-desktop"></i> <span>可视化数据</span>
@@ -110,7 +115,7 @@
 						<ul class="sub">
 							<li shiro:hasPermission="modian-visual:url" class="active"><a
 								href="/data-visualization/modian-visual">摩点项目数据</a></li>
-							<li>
+							<li shiro:hasPermission="message-visual:url">
 								<a href="/data-visualization/room-message">口袋房间消息</a>
 							</li>
 						</ul></li>

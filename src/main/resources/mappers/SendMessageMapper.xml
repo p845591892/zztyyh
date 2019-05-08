@@ -12,9 +12,10 @@
 		WHERE
 			t.project_id = #{id}
 		GROUP BY
-			t.user_id
+			t.user_id,
+			t.user_name
 		ORDER BY
-			SUM(t.backer_money) DESC
+			ROUND(SUM(t.backer_money), 2) DESC
 		LIMIT #{limit}
 	</select>
 </mapper>

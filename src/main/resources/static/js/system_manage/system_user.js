@@ -17,6 +17,9 @@ $(document).ready(function() {
 			field : "salt",
 			title : "盐码"
 		}, {
+			field : "email",
+			title : "邮箱"
+		}, {
 			field : "state",
 			title : "状态",
 			formatter : function(value, row, index) {

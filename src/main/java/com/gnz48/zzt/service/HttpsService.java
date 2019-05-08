@@ -14,6 +14,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,8 @@ import com.gnz48.zzt.util.StringUtil;
 @Service
 @Transactional
 public class HttpsService {
+	
+	private static final Logger log = LoggerFactory.getLogger(HttpsService.class);
 	
 	/**
 	 * 口袋48登录账号
@@ -110,6 +114,7 @@ public class HttpsService {
 	 * @author JuFF_白羽
 	 * @return String token的字符串
 	 */
+	@Deprecated
 	private String getToken() {
 		Https https = new Https();
 		Map<String, String> requestPropertys = new HashMap<String, String>();// 设置请求头
@@ -137,7 +142,7 @@ public class HttpsService {
 	 *            消息json对象
 	 * @return String 消息内容
 	 */
-	private String getMsgContent(String messageObject, JSONObject dataObject) {
+	protected String getMsgContent(String messageObject, JSONObject dataObject) {
 		StringBuffer msgContent = new StringBuffer();
 		JSONObject extInfoObject = new JSONObject(dataObject.getString("extInfo"));
 		if (messageObject.equals("text")) {
@@ -158,7 +163,7 @@ public class HttpsService {
 			msgContent.append(extInfoObject.getString("referencecoverImage"));
 		} else if (messageObject.equals("faipaiText")) {
 			String nickName = getNameByFaipaiUserId(extInfoObject.getLong("faipaiUserId"));
-			msgContent.append("回复@");
+			msgContent.append("回复 @");
 			msgContent.append(nickName);
 			msgContent.append("：");
 			msgContent.append(extInfoObject.getString("messageText"));
@@ -205,7 +210,7 @@ public class HttpsService {
 			JSONObject memberObject = jsonObject.getJSONObject(key);
 			Member member = new Member();
 			member.setId(memberObject.getLong("memberId"));// 成员ID
-			member.setAvatar(getAvatar(memberObject.getString("memberAvatar")));// 成员头像地址
+			member.setAvatar(getImageUrl(memberObject.getString("memberAvatar")));// 成员头像地址
 			member.setName(memberObject.getString("memberName"));// 成员名字
 			member.setPinyin(memberObject.getString("memberPinyin"));// 成员名字拼音
 			member.setTeamId(memberObject.getLong("teamId"));// 所属队伍ID
@@ -256,44 +261,47 @@ public class HttpsService {
 	public void syncDynamic() {
 		List<WeiboUser> users = userRepository.findAll();
 		for (WeiboUser user : users) {
-			String url = "https://m.weibo.cn/api/container/getIndex?containerid=" + user.getContainerId();
+			String url = "https://m.weibo.cn/api/container/getIndex?containerid=" + user.getContainerDynamicId();
 			Https https = new Https();
 			Map<String, String> requestPropertys = new HashMap<String, String>();
 			requestPropertys.put("Accept", "application/json, text/plain, */*");
 			requestPropertys.put("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+					"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
 			requestPropertys.put("X-Requested-With", "XMLHttpRequest");
 			String result = https.setDataType("GET").setUrl(url).setRequestProperty(requestPropertys).send();
 			JSONObject json = new JSONObject(result);
 			JSONObject data = json.getJSONObject("data");
-			if (data.has("cards")) {
-				JSONArray cards = data.getJSONArray("cards");
-				for (int i = 0; i < cards.length(); i++) {
-					JSONObject card = cards.getJSONObject(i);
-					int cardType = card.getInt("card_type");
-					if (cardType == 9) {// 当为本人发的微博时
-						JSONObject mblog = card.getJSONObject("mblog");
-						Dynamic oldDynamic = dynamicRepository.findOne(mblog.getLong("id"));
-						if (oldDynamic != null) {// 当该条动态存在数据库中时,判断是否置顶
-							if (mblog.has("title")) {// 若为置顶博，则结束本次循环
-								continue;
-							} else {// 否则结束循环
-								break;
-							}
+//			if (data.has("cards")) {
+			JSONArray cards = data.getJSONArray("cards");
+			for (int i = 0; i < cards.length(); i++) {
+				JSONObject card = cards.getJSONObject(i);
+				int cardType = card.getInt("card_type");
+				if (cardType == 9) {// 当为本人发的微博时
+					JSONObject mblog = card.getJSONObject("mblog");
+					Dynamic oldDynamic = dynamicRepository.findOne(mblog.getLong("id"));
+					if (oldDynamic != null) {// 当该条动态存在数据库中时,判断是否置顶
+						if (mblog.has("title")) {// 若为置顶博，则结束本次循环
+							continue;
+						} else {// 否则结束循环
+							break;
 						}
-						Dynamic dynamic = new Dynamic();
-						dynamic.setCreatedAt(mblog.getString("created_at"));// 创建时间
-						dynamic.setId(mblog.getLong("id"));// 动态ID
-						dynamic.setWeiboContent(getWeiboContent(mblog));// 微博内容
-						JSONObject userObject = mblog.getJSONObject("user");
-						dynamic.setSenderName(userObject.getString("screen_name"));// 发送者姓名
-						dynamic.setUserId(userObject.getLong("id"));// 发送者ID
-						dynamic.setIsSend(1);// 是否已执行发送任务，默认为1否
-						dynamic.setSyncDate(new Date());// 同步时间
-						dynamicRepository.save(dynamic);
 					}
+					Dynamic dynamic = new Dynamic();
+					dynamic.setCreatedAt(mblog.getString("created_at"));// 创建时间
+					dynamic.setId(mblog.getLong("id"));// 动态ID
+					dynamic.setWeiboContent(getWeiboContent(mblog));// 微博内容
+					JSONObject userObject = mblog.getJSONObject("user");
+					dynamic.setSenderName(userObject.getString("screen_name"));// 发送者姓名
+					dynamic.setUserId(userObject.getLong("id"));// 发送者ID
+					dynamic.setIsSend(1);// 是否已执行发送任务，默认为1否
+					dynamic.setSyncDate(new Date());// 同步时间
+					dynamicRepository.save(dynamic);
 				}
 			}
+				
+//			} else {
+//				log.info("未能正常获取{}包含cards对象的的微博接口返回的json。", user.getUserName());
+//			}
 		}
 	}
 
@@ -310,17 +318,17 @@ public class HttpsService {
 		String text = null;
 		// 获取文本
 		if (mblog.has("raw_text")) {// 当有特殊行文本时直接取，而不去解析普通html文本
-			sb.append(StringUtil.removeNonBmpUnicode(mblog.getString("raw_text")));
+			sb.append(mblog.getString("raw_text"));
 		} else {
-			text = StringUtil.removeNonBmpUnicode(mblog.getString("text")).replace("<br />", "$br$");
+			text = mblog.getString("text").replace("<br />", "$br$");
 			Document doc = Jsoup.parse(text);
 			sb.append(doc.text().replace("$br$", "<br>"));
 		}
 		
 		// 获取转发内容
 		if (mblog.has("retweeted_status")) {
-			sb.append("<br>----------");
-			sb.append("<br>转发@");
+			sb.append("<br>--------------------");
+			sb.append("<br>转发 @");
 			JSONObject retStat = mblog.getJSONObject("retweeted_status");
 			String retStatUserName = retStat.getJSONObject("user").getString("screen_name");
 			sb.append(retStatUserName);
@@ -356,6 +364,7 @@ public class HttpsService {
 	 * @throws ParseException
 	 * @throws JSONException
 	 */
+	@Deprecated
 	public void syncRoomMessage() throws JSONException, ParseException {
 		Https https = new Https();
 		/* 同步口袋房间消息 */
@@ -577,6 +586,7 @@ public class HttpsService {
 	 *            口袋用户ID
 	 * @return String 口袋用户昵称
 	 */
+	@Deprecated
 	private String getNameByFaipaiUserId(Long userId) {
 		Https https = new Https();
 		String name = String.valueOf(userId);
@@ -594,35 +604,35 @@ public class HttpsService {
 	}
 
 	/**
-	 * @Description: 根据SOURCE_URL，获取完整的头像地址
+	 * @Description: 根据SOURCE_URL，获取完整的图片地址
 	 * @author JuFF_白羽
-	 * @param memberAvatar
-	 *            原头像不完整的地址
-	 * @return String 完整的头像地址
+	 * @param imageUrl
+	 *            原图片的地址，不完整的将会自行补全
+	 * @return String 完整的图片地址
 	 */
-	private String getAvatar(String memberAvatar) {
-		if (memberAvatar.indexOf("http://") == -1) {
-			memberAvatar = SOURCE_URL + memberAvatar;
+	protected String getImageUrl(String imageUrl) {
+		if (imageUrl.indexOf("http://") == -1) {
+			imageUrl = SOURCE_URL + imageUrl;
 		}
-		return memberAvatar;
+		return imageUrl;
 	}
 
 	/**
 	 * @Description: 根据容器ID发送请求获取微博用户实体信息
 	 * @author JuFF_白羽
-	 * @param containerId
-	 *            容器ID
+	 * @param containerUserId
+	 *            容器ID(用户)
 	 * @return WeiboUser 微博用户
 	 */
-	public WeiboUser getWeiboUser(Long containerId) {
+	public WeiboUser getWeiboUser(Long containerUserId) {
 		Https https = new Https();
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("containerid", String.valueOf(containerId));
+		params.put("containerid", String.valueOf(containerUserId));
 
 		Map<String, String> requestPropertys = new HashMap<String, String>();
 		requestPropertys.put("Accept", "application/json, text/plain, */*");
 		requestPropertys.put("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
 		requestPropertys.put("X-Requested-With", "XMLHttpRequest");
 
 		String result = https.setDataType("GET").setUrl("https://m.weibo.cn/api/container/getIndex").setParams(params)
@@ -632,45 +642,45 @@ public class HttpsService {
 		if (jsonObject.getInt("ok") == 1) {// 成功返回结果
 			JSONObject data = jsonObject.getJSONObject("data");
 			
-			if (data.has("cards")) {// cards情况的结果
-				JSONArray cards = data.getJSONArray("cards");
-				
-				for (int i = 0; i < cards.length(); i++) {
-					JSONObject card = cards.getJSONObject(i);
-
-					if (card.getInt("card_type") == 9) {
-						JSONObject user = card.getJSONObject("mblog").getJSONObject("user");
-
-						WeiboUser weiboUser = new WeiboUser();
-						weiboUser.setAvatarHd(user.getString("avatar_hd"));
-						weiboUser.setContainerId(containerId);
-						weiboUser.setFollowCount(user.getInt("follow_count"));
-						weiboUser.setFollowersCount(user.getInt("followers_count"));
-						System.out.println("粉丝数:" + user.getInt("followers_count"));
-						weiboUser.setId(user.getLong("id"));
-						weiboUser.setUserName(user.getString("screen_name"));
-
-						return weiboUser;
-					} else {
-						continue;
-					}
-				}
-			}
+//			if (data.has("cards")) {// cards情况的结果
+//				JSONArray cards = data.getJSONArray("cards");
+//				
+//				for (int i = 0; i < cards.length(); i++) {
+//					JSONObject card = cards.getJSONObject(i);
+//
+//					if (card.getInt("card_type") == 9) {
+//						JSONObject user = card.getJSONObject("mblog").getJSONObject("user");
+//
+//						WeiboUser weiboUser = new WeiboUser();
+//						weiboUser.setAvatarHd(user.getString("avatar_hd"));
+//						weiboUser.setContainerId(containerUserId);
+//						weiboUser.setFollowCount(user.getInt("follow_count"));
+//						weiboUser.setFollowersCount(user.getInt("followers_count"));
+//						weiboUser.setId(user.getLong("id"));
+//						weiboUser.setUserName(user.getString("screen_name"));
+//
+//						return weiboUser;
+//					} else {
+//						continue;
+//					}
+//				}
+//			}
 			
-			if (data.has("userInfo")) {// userInfo情况的结果
+//			if (data.has("userInfo")) {// 存在userInfo情况的结果
 				JSONObject userInfo = data.getJSONObject("userInfo");
+				JSONObject tabsInfo = data.getJSONObject("tabsInfo");
 				
 				WeiboUser weiboUser = new WeiboUser();
 				weiboUser.setAvatarHd(userInfo.getString("avatar_hd"));
-				weiboUser.setContainerId(containerId);
+				weiboUser.setContainerUserId(containerUserId);
+				weiboUser.setContainerDynamicId(tabsInfo.getJSONArray("tabs").getJSONObject(1).getLong("containerid"));
 				weiboUser.setFollowCount(userInfo.getInt("follow_count"));
 				weiboUser.setFollowersCount(userInfo.getInt("followers_count"));
-				System.out.println("粉丝数:" + userInfo.getInt("followers_count"));
 				weiboUser.setId(userInfo.getLong("id"));
 				weiboUser.setUserName(userInfo.getString("screen_name"));
 				
 				return weiboUser;
-			}
+//			}
 
 		}
 		return null;
@@ -683,7 +693,7 @@ public class HttpsService {
 	public void syncWeiboUser() {
 		List<WeiboUser> weiboUsers = weiboUserRepository.findAll();
 		for (WeiboUser weiboUser : weiboUsers) {
-			WeiboUser newWeiboUser = getWeiboUser(weiboUser.getContainerId());
+			WeiboUser newWeiboUser = getWeiboUser(weiboUser.getContainerUserId());
 			weiboUserRepository.save(newWeiboUser);
 		}
 	}

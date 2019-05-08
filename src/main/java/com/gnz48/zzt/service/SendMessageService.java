@@ -217,6 +217,8 @@ public class SendMessageService {
 					StringBuffer sb = new StringBuffer();
 					sb.append("来自微博：");
 					sb.append(dynamic.getSenderName());
+					sb.append(" ");
+					sb.append(dynamic.getCreatedAt());
 					sb.append("\n");
 					sb.append(dynamic.getWeiboContent());
 					String message = sb.toString().replace("<br>", "\n");

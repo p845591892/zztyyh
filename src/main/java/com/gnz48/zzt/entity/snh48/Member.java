@@ -71,7 +71,7 @@ public class Member {
 	private Long roomId;
 
 	/**
-	 * 成员口袋房间监控状态：1开启，2关闭，40003房间不存在
+	 * 成员口袋房间监控状态：1开启，2关闭，404房间不存在
 	 */
 	@Column(name = "ROOM_MONITOR")
 	private Integer roomMonitor;

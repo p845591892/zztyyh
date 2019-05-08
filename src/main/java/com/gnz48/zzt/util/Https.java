@@ -55,7 +55,7 @@ public class Https {
 	public Https() {
 	}
 
-	public Https(String url, String dataType, Map<String, String> params, Map<String, String> requestPropertys,
+	public void refreshHttps(String url, String dataType, Map<String, String> params, Map<String, String> requestPropertys,
 			String payloadJson) {
 		this.url = url;
 		this.dataType = dataType;
@@ -202,15 +202,17 @@ public class Https {
 				buffer.append(line);
 			}
 		} catch (NoSuchAlgorithmException e) {
-			log.info(e.toString());
+			log.info(e.getMessage());
 		} catch (KeyManagementException e) {
-			log.info(e.toString());
+			log.info(e.getMessage());
 		} catch (MalformedURLException e) {
-			log.info(e.toString());
+			log.info(e.getMessage());
 		} catch (IOException e) {
-			log.info(e.toString());
+			log.info(e.getMessage());
+		} catch (Exception e) {
+			log.info(e.getMessage());
 		} finally {
-			new Https(null, null, null, null, null);// 清空参数
+			refreshHttps(null, null, null, null, null);// 清空参数
 		}
 		return buffer.toString();
 	}
@@ -290,8 +292,8 @@ public class Https {
 		try {
 			HttpURLConnection connection = null;
 			connection = (HttpsURLConnection) new URL(this.url).openConnection();
-			connection.setReadTimeout(10000);
-			connection.setConnectTimeout(10000);
+			connection.setReadTimeout(20000);
+			connection.setConnectTimeout(20000);
 			connection.setRequestMethod("GET");
 			if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
 				inputStream = connection.getInputStream();
@@ -300,11 +302,14 @@ public class Https {
 				log.info("请求网络图片失败：{}", connection.getResponseCode());
 			}
 		} catch (IOException e) {
-			log.info(e.toString());
+			log.info(e.getMessage());
+		} catch (Exception e) {
+			log.info( e.getMessage());
 		} finally {
 			if (inputStream != null) {
 				inputStream.close();
 			}
+			refreshHttps(null, null, null, null, null);// 清空参数
 		}
 		return null;
 	}

@@ -5,7 +5,6 @@
 
 	<groupId>com.gnz48.zzt</groupId>
 	<artifactId>zzt</artifactId>
-	<version>2.5.3</version>
 	<packaging>jar</packaging>
 
 	<name>zztyyh</name>
@@ -32,6 +31,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		
+		<!-- freemarker模板引擎 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-freemarker</artifactId>
@@ -67,6 +68,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- spring-boot的properties配置依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 		
 		<!-- mybatis框架 -->
@@ -126,8 +134,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180130</version>
-		</dependency>
+			</dependency>
 
 		<!-- 非严格html依赖 -->
 		<dependency>
@@ -213,4 +220,5 @@
 	</build>
 
 
+	<version>3.0.0</version>
 </project>

@@ -14,15 +14,17 @@
 					CONCAT(a.group_name, '-', a.`name`) `icon`,
 					count(b.room_id) `data`
 				FROM
-					t_snh_member a,
-					t_snh_room_message b
+					t_snh_member a
+					LEFT OUTER JOIN t_snh_room_message b ON a.room_id = b.room_id
 				WHERE
-					a.room_id = b.room_id
-				AND b.message_time &gt;= #{beginDate, jdbcType=TIMESTAMP}
+					  b.message_time &gt;= #{beginDate, jdbcType=TIMESTAMP}
 				AND b.message_time &lt;= #{endDate, jdbcType=TIMESTAMP}
 				AND a.room_monitor = 1
 				GROUP BY
-					b.room_id
+					b.room_id,
+					a.room_name,
+					a.group_name,
+					a.`name`
 			) c
 		ORDER BY
 			c.`data` DESC
@@ -39,11 +41,10 @@
 					b.avatar icon,
 					COUNT(a.sender_id) `data`
 				FROM
-					t_snh_room_message a,
-					t_snh_member b
+					t_snh_room_message a
+					LEFT OUTER JOIN t_snh_member b ON a.sender_id = b.id
 				WHERE
-					a.sender_id = b.id
-				AND a.message_time &gt;= #{beginDate, jdbcType=TIMESTAMP}
+					  a.message_time &gt;= #{beginDate, jdbcType=TIMESTAMP}
 				AND b.room_monitor = 1
 				GROUP BY
 					a.sender_id
@@ -66,9 +67,10 @@
 				#{item}
 			</foreach>
 		GROUP BY
-			t.user_id
+			t.user_id,
+			t.user_name
 		ORDER BY
-			SUM(t.backer_money) DESC
+			ROUND(SUM(t.backer_money), 2) DESC
 	</select>
 
 </mapper>

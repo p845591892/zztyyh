@@ -39,7 +39,7 @@ public class ScheduleRefreshTask {
 	 */
 	@Autowired
 	private QuartzConfigRepository quartzConfigRepository;
-
+	
 	/**
 	 * 定时任务调度工厂
 	 */

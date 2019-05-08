@@ -25,7 +25,7 @@ $(document).ready(function() {
 			width : 70,
 			formatter : function(value, row, index) {
 				var msgObject = row.msgObject;
-				switch (msgObject) {/*,,...*/
+				switch (msgObject) {
 				case "text":
 					msgObject = "普通消息";
 					break;
@@ -50,6 +50,28 @@ $(document).ready(function() {
 				case "videoRecord":
 					msgObject = "视频";
 					break;
+				/* 2019年新版 */
+				case "TEXT":
+					msgObject = "普通消息";
+					break;
+				case "REPLY":
+					msgObject = "翻牌";
+					break;
+				case "IMAGE":
+					msgObject = "图片";
+					break;
+				case "LIVEPUSH":
+					msgObject = "生放送";
+					break;
+				case "FLIPCARD":
+					msgObject = "付费翻牌";
+					break;
+				case "EXPRESS":
+					msgObject = "特殊表情";
+					break;
+				case "VIDEO":
+					msgObject = "视频";
+					break;
 				default:
 					msgObject = "未知格式";
 					break;
@@ -58,11 +80,22 @@ $(document).ready(function() {
 			}
 		}, {
 			field : "msgContent",
-			title : "消息内容"
+			title : "消息内容",
+			formatter : function(value, row, index) {
+				var msgObject = row.msgObject;
+				var msgContent = row.msgContent;
+				if (msgObject == "IMAGE" || msgObject == "image") {
+					msgContent = msgContent.replace("<img>", "");
+					msgContent = msgContent.replace("[图片]", "");
+					return "<img src=\""+msgContent+"\" width=\"200\"/>";
+				} else {
+					return msgContent;
+				}
+			}
 		}, {
 			field : "msgTime",
 			title : "消息发送时间",
-			width : 135
+			width : 138
 		}, {
 			field : "isSend",
 			title : "是否发送过QQ消息",
@@ -101,6 +134,5 @@ $(document).ready(function() {
 		showColumns : true,
 		showRefresh : true
 	});
-	
 	
 });

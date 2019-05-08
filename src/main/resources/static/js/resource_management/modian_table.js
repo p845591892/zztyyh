@@ -64,7 +64,7 @@ $(document).ready(function() {
 		pagination : true,
 		sidePagination : "client",
 		pageNumber : 1,
-		pageSize : 10,
+		pageSize : 15,
 		paginationLoop : false,
 		pageList : "unlimited",
 		cache : false,

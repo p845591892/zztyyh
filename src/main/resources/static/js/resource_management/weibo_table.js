@@ -49,8 +49,12 @@ $(document)
 													field : "followersCount",
 													title : "粉丝数"
 												}, {
-													field : "containerId",
-													title : "容器ID",
+													field : "containerUserId",
+													title : "容器ID(用户)",
+													visible : false
+												}, {
+													field : "containerDynamicId",
+													title : "容器ID(动态)",
 													visible : false
 												} ],
 										striped : true,

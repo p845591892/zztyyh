@@ -31,10 +31,16 @@ public class WeiboUser {
 	private String userName;
 
 	/**
-	 * 容器ID：获取用户微博数据的关键字段
+	 * 容器ID：用户数据的关键字段
 	 */
-	@Column(name = "CONTAINER_ID")
-	private Long containerId;
+	@Column(name = "CONTAINER_USER_ID")
+	private Long containerUserId;
+
+	/**
+	 * 容器ID：动态数据的关键字段
+	 */
+	@Column(name = "CONTAINER_DYNAMIC_ID")
+	private Long containerDynamicId;
 
 	/**
 	 * 头像地址
@@ -70,12 +76,20 @@ public class WeiboUser {
 		this.userName = userName;
 	}
 
-	public Long getContainerId() {
-		return containerId;
+	public Long getContainerUserId() {
+		return containerUserId;
 	}
 
-	public void setContainerId(Long containerId) {
-		this.containerId = containerId;
+	public void setContainerUserId(Long containerUserId) {
+		this.containerUserId = containerUserId;
+	}
+
+	public Long getContainerDynamicId() {
+		return containerDynamicId;
+	}
+
+	public void setContainerDynamicId(Long containerDynamicId) {
+		this.containerDynamicId = containerDynamicId;
 	}
 
 	public String getAvatarHd() {
@@ -104,8 +118,9 @@ public class WeiboUser {
 
 	@Override
 	public String toString() {
-		return "WeiboUser [id=" + id + ", userName=" + userName + ", containerId=" + containerId + ", avatarHd="
-				+ avatarHd + ", followCount=" + followCount + ", followersCount=" + followersCount + "]";
+		return "WeiboUser [id=" + id + ", userName=" + userName + ", containerUserId=" + containerUserId
+				+ ", containerDynamicId=" + containerDynamicId + ", avatarHd=" + avatarHd + ", followCount="
+				+ followCount + ", followersCount=" + followersCount + "]";
 	}
 
 }

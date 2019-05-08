@@ -105,7 +105,7 @@ $(document)
 															return "<button type=\"button\" class=\"btn btn-success\"  onclick=\"updateRoomMonitor(this,"
 																	+ id
 																	+ ",'open')\"><i class=\"fa fa-play-circle-o fa-2x\"></i> 开启</button>";
-														} else if (roomMonitor == 40003) {
+														} else if (roomMonitor == 404) {
 															return "房间不存在";
 														}
 													}

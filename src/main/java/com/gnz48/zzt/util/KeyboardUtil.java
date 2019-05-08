@@ -216,8 +216,8 @@ public class KeyboardUtil {
 		clip.setContents(imgSel, null);
 		// 按下Ctrl+V实现粘贴图片
 		keyPressWithCtrl(r, KeyEvent.VK_V);
-		// 等1秒
-		r.delay(1000);
+		// 等1.5秒
+		r.delay(1500);
 	}
 
 }

@@ -10,7 +10,8 @@
 			t.`password`,
 			t.salt,
 			t.state,
-			t.username
+			t.username,
+			t.email
 		FROM
 			t_sys_user t
 	</select>
@@ -59,11 +60,10 @@
 			r.role,
 			r.available
 		FROM
-			t_sys_role r,
-			t_sys_user_role ur
+			t_sys_role r
+			LEFT OUTER JOIN t_sys_user_role ur ON r.id = ur.role_id
 		WHERE
-			r.id = ur.role_id
-		AND ur.user_id = #{uid}
+			ur.user_id = #{uid}
 	</select>
 	
 	<insert id="insertUserRole" parameterType="java.util.Map">
@@ -133,11 +133,10 @@
 			) `name`,
 			p.parent_id parentId
 		FROM
-			t_sys_permission p,
-			t_sys_role_permission rp
+			t_sys_permission p
+			LEFT OUTER JOIN t_sys_role_permission rp ON p.id = rp.permission_id
 		WHERE
-			p.id = rp.permission_id
-		AND rp.role_id = #{rid}
+			rp.role_id = #{rid}
 	</select>
 	
 	<insert id="insertRolePermission" parameterType="java.util.Map">

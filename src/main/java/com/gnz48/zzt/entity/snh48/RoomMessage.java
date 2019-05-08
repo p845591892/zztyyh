@@ -138,4 +138,11 @@ public class RoomMessage {
 		this.isSend = isSend;
 	}
 
+	@Override
+	public String toString() {
+		return "RoomMessage [id=" + id + ", msgTime=" + msgTime + ", senderName=" + senderName + ", senderId="
+				+ senderId + ", roomId=" + roomId + ", messageObject=" + messageObject + ", msgContent=" + msgContent
+				+ ", isSend=" + isSend + "]";
+	}
+	
 }

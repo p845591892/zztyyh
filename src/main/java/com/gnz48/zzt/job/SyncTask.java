@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
-import com.gnz48.zzt.service.HttpsService;
+import com.gnz48.zzt.service.Https2019Service;
 
 /**
  * @ClassName: SyncTask
@@ -25,10 +25,10 @@ public class SyncTask {
 	}
 
 	/**
-	 * Https请求服务
+	 * 2019年版Https服务接口
 	 */
 	@Autowired
-	private HttpsService httpsService;
+	Https2019Service https2019Service;
 
 	/**
 	 * @Title: syncMember
@@ -36,11 +36,8 @@ public class SyncTask {
 	 * @author JuFF_白羽
 	 */
 	public void syncMember() {
-		/* 
-		 *  接口已过时，无法再取得数据。
-		 *  httpsService.syncMember();
-		 */
-		httpsService.syncWeiboUser();
+		https2019Service.syncMember();
+		https2019Service.syncWeiboUser();
 	}
 
 	/**
@@ -49,7 +46,7 @@ public class SyncTask {
 	 * @author JuFF_白羽
 	 */
 	public void syncDynamic() {
-		httpsService.syncDynamic();
+		https2019Service.syncDynamic();
 	}
 
 	/**
@@ -60,10 +57,7 @@ public class SyncTask {
 	 * @throws JSONException
 	 */
 	public void syncRoomMessage() throws JSONException, ParseException {
-		/* 
-		 * 接口已过时，无法再取得数据。
-		 * httpsService.syncRoomMessage();
-		 */
+		https2019Service.syncRoomMessage();
 	}
 
 	/**
@@ -74,7 +68,7 @@ public class SyncTask {
 	 * @throws JSONException
 	 */
 	public void syncModianPool() throws JSONException, ParseException {
-		httpsService.syncModianPool();
+		https2019Service.syncModianPool();
 	}
 
 }

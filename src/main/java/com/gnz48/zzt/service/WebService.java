@@ -85,7 +85,7 @@ public class WebService {
 		/* 第一组 */
 		MtboxVO mtbox1 = new MtboxVO();
 		mtbox1.setName("已开通口袋房间的成员");
-		mtbox1.setData(memberRepository.countByNotRoomMonitor(40003));
+		mtbox1.setData(memberRepository.countByNotRoomMonitor(404));
 		mtbox1.setIcon("<i class=\"fa fa-user-o\"></i>");
 		/* 第二组 */
 		MtboxVO mtbox2 = new MtboxVO();

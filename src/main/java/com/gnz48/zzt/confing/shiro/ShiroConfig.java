@@ -131,7 +131,11 @@ public class ShiroConfig {
 		/*
 		 * L--L摩点项目数据
 		 */
-		filterChainDefinitionMap.put("/data-visualization/modian-visual", "perms[modian-visual:url]");// 可视化数据跳转url
+		filterChainDefinitionMap.put("/data-visualization/modian-visual", "perms[modian-visual:url]");// 可视化摩点数据跳转url
+		/*
+		 * L--L口袋房间消息数据
+		 */
+		filterChainDefinitionMap.put("/data-visualization/room-message", "perms[message-visual:url]");// 可视化口袋消息数据跳转url
 
 		// 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
 		shiroFilterFactoryBean.setLoginUrl("/login");

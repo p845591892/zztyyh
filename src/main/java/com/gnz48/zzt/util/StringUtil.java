@@ -16,12 +16,14 @@ public class StringUtil extends StringUtils{
 
 	/**
 	 * @Title: removeNonBmpUnicode
-	 * @Description: 过滤掉特殊编码的文字表情，例如emoji表情
+	 * @Description: 过滤掉特殊编码的文字表情，例如emoji表情<p>
+	 * 							在升级为3.X版本后，已支持emoji，故该方法已不再使用。
 	 * @author JuFF_白羽
 	 * @param str
 	 *            需要过滤的字符串
 	 * @return String 过滤后的字符串
 	 */
+	@Deprecated
 	public static String removeNonBmpUnicode(String str) {
 		for (int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
