@@ -9,8 +9,8 @@ SNH48Group机器人<br>
 	（6）其他
 开发所属：GNZ48-章泽婷应援会
 	虽然人已不在，但项目还是会继续更新和优化，个人兴趣。 <br>
-机器人系统相关内容可查看<a src="https://blog.csdn.net/sinat_39572070/article/details/84024989">CSDN</a>，内有该项目最基本的思路。 <br>
-可直接使用的➡ ️<a src="http://203.195.205.79:1029/login">项目部署地址</a> <br>
+机器人系统相关内容可查看 https://blog.csdn.net/sinat_39572070/article/details/84024989 CSDN，内有该项目最基本的思路。 <br>
+可直接使用的➡  项目部署地址：http://203.195.205.79:1029/login
 源码并不能直接运行，需要安装5.7以上的mysql，并且编码要支持emoji。<br>
 
 现已支持口袋48版本：6.0.0以上
