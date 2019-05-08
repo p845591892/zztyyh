@@ -1,5 +1,6 @@
 server:
   port: 1029
+  
 spring:
   application:
     name: gnz48-zzt-yyh
@@ -19,32 +20,59 @@ spring:
     filters: stat,log4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://${ip}:3306/zztyyh?useUnicode=true&characterEncoding=utf8
-    username: ${username}
-    password: ${password}
+#Mac
+#    url: jdbc:mysql://localhost:3306/zztyyh?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
+#    username: root
+#    password: '0112'
+#公司
+#    url: jdbc:mysql://10.18.204.25:3306/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
+#    username: root
+#    password: '0112'
+#服务器(本机)
+    url: jdbc:mysql://172.16.0.6:3306/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
+    username: zztyyh
+    password: zztyyh1029
+#服务器(远程)
+#    url: jdbc:mysql://203.195.205.79:3306/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
+#    username: zztyyh
+#    password: zztyyh1029
   jpa:
     database: mysql
     hibernate.ddl-auto: none
     show-sql: false
+#    hibernate.ddl-auto: update
+#    show-sql: true
   thymeleaf:
+    #指定资源位置
     prefix: classpath:/templates/
     mode: LEGACYHTML5
+    #禁止浏览器缓存
     cache: false
     content-type: text/html; charset=utf-8
   mail:
     host: smtp.qq.com
-    username: ${username}
-    password: ${password}
+    username: lichaoyi0112@qq.com
+    password: ydgajkqnmzvqbchf
     properties:
-      mail:
+      mail: 
         smtp:
           auth: true
           starttls:
             enable: true
             required: true
+  
+#MyBatis配置
 mybatis:
   type-aliases-package: com.gnz48.zzt.dao
   mapper-locations: classpath:mappers/*Mapper.xml
+  configuration:
+    default-executor-type: simple
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  params: count=countSql
+  
+#口袋48配置
 koudai48:
-  username: ${username}
-  password: ${password}
+  username: 18824171764
+  password: woshi182tidu
