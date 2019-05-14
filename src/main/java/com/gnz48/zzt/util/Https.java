@@ -46,7 +46,7 @@ public class Https {
 
 	private String dataType;
 
-	private String result;
+//	private String result;
 
 	private Map<String, String> requestPropertys;
 

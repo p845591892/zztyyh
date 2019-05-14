@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gnz48.zzt.entity.QuartzConfig;
 import com.gnz48.zzt.repository.QuartzConfigRepository;
 import com.gnz48.zzt.util.SpringUtil;
+import com.gnz48.zzt.util.StringUtil;
 
 /**
  * @Description: 定时任务配置列表操作服务类
@@ -42,13 +43,13 @@ public class QuartzConfigService {
 		if (quartzConfig.getId() == null) {
 			return 0;
 		}
-		if (quartzConfig.getJobName() == null || quartzConfig.getJobName().equals("")) {
+		if (StringUtil.isEmpty(quartzConfig.getJobName())) {
 			return 1;
 		}
-		if (quartzConfig.getCronTrigger() == null || quartzConfig.getCronTrigger().equals("")) {
+		if (StringUtil.isEmpty(quartzConfig.getCronTrigger())) {
 			return 2;
 		}
-		if (quartzConfig.getCron() == null || quartzConfig.getCron().equals("")) {
+		if (StringUtil.isEmpty(quartzConfig.getCron())) {
 			return 3;
 		}
 		CronTrigger trigger = (CronTrigger) SpringUtil.getBean(quartzConfig.getCronTrigger());
@@ -69,7 +70,7 @@ public class QuartzConfigService {
 			scheduler.rescheduleJob(trigger.getKey(), trigger);// 按新的trigger重新设置job执行
 			log.info("Set up.");
 		}
-		QuartzConfig newConfig = quartzConfigRepository.save(quartzConfig);
+		quartzConfigRepository.save(quartzConfig);
 		return 200;
 	}
 

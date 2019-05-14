@@ -5,11 +5,8 @@ import javax.annotation.Resource;
 import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.gnz48.zzt.repository.QuartzConfigRepository;
 
 /**
  * @Description: 轮询服务类
@@ -23,13 +20,14 @@ import com.gnz48.zzt.repository.QuartzConfigRepository;
 @Deprecated
 public class ScheduleRefreshService {
 
+	@SuppressWarnings("unused")
 	private Logger log = LoggerFactory.getLogger(ScheduleRefreshService.class);
 
 	/**
 	 * 定时任务配置Repository
 	 */
-	@Autowired
-	private QuartzConfigRepository quartzConfigRepository;
+//	@Autowired
+//	private QuartzConfigRepository quartzConfigRepository;
 
 	/**
 	 * 定时任务调度工厂

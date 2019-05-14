@@ -29,6 +29,7 @@ import com.gnz48.zzt.jsoup.Rule;
  * ---------------------------------------------------------*
  * 
  */
+@Deprecated
 public class ExtractService {
 
 	public static List<LinkTypeData> extract(Rule rule) {

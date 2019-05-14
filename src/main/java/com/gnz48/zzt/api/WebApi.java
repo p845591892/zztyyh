@@ -150,7 +150,6 @@ public class WebApi {
 		// 登录失败从request中获取shiro处理的异常信息。
 		// shiroLoginFailure:就是shiro异常类的全类名.
 		ModelAndView mav = new ModelAndView();
-		String msg = "";
 		try {
 			subject.logout();
 		} catch (Exception e) {
@@ -353,5 +352,5 @@ public class WebApi {
 		mav.setViewName("data_visualization/room_message_table");
 		return mav;
 	}
-
+	
 }

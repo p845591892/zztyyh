@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gnz48.zzt.repository.snh48.MemberRepository;
 import com.gnz48.zzt.service.Https2019Service;
-import com.gnz48.zzt.service.HttpsService;
 import com.gnz48.zzt.vo.ResultVO;
 
 /**

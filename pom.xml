@@ -150,6 +150,23 @@
 			<version>1.4.0</version>
 		</dependency>
 
+		<!--shiro缓存依赖 -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<!-- ehcache 缓存 -->
+		<!-- <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency> -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+		</dependency>
+
 		<!-- thymeleaf基于Shiro的特殊标签语言 -->
 		<dependency>
 			<groupId>com.github.theborakompanioni</groupId>

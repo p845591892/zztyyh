@@ -23,6 +23,7 @@ import com.gnz48.zzt.vo.ResultVO;
  */
 public class ShiroPermsFilter extends PermissionsAuthorizationFilter {
 
+	@SuppressWarnings("unused")
 	private Logger log = LoggerFactory.getLogger(ShiroPermsFilter.class);
 
 	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {

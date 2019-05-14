@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gnz48.zzt.entity.QuartzConfig;
 import com.gnz48.zzt.service.QuartzConfigService;
@@ -30,10 +31,10 @@ public class QuartzConfigApi {
 	/**
 	 * @Description: 修改定时任务配置
 	 * @author JuFF_白羽
-	 * @throws SchedulerException 
+	 * @throws SchedulerException
 	 */
 	@PostMapping("/update")
-	public ResultVO addQuartzConfig(QuartzConfig quartzConfig) throws SchedulerException {
+	public ResultVO updateQuartzConfig(QuartzConfig quartzConfig) throws SchedulerException {
 		ResultVO result = new ResultVO();
 		int i = quartzConfigService.updateQuartzConfig(quartzConfig);
 		if (i == 0) {
@@ -50,5 +51,15 @@ public class QuartzConfigApi {
 		result.setStatus(i);
 		return result;
 	}
+
+//	/**
+//	 * 新增一条定时任务
+//	 * @param quartzConfig
+//	 */
+//	@PostMapping("/add")
+//	public ResultVO addQuartzConfig(QuartzConfig quartzConfig) {
+//		
+//		return null;
+//	}
 
 }

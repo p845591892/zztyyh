@@ -48,7 +48,7 @@ public class MyShiroRealm extends AuthorizingRealm {
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		// log.info("----->> shiro-获取身份权限");
+		 log.info("----->> shiro-获取身份权限");
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 		String username = (String) principals.getPrimaryPrincipal();
 		User user = userRepository.findByUsername(username);
@@ -68,7 +68,12 @@ public class MyShiroRealm extends AuthorizingRealm {
 		String username = (String) token.getPrincipal();
 		// 通过username从数据库中查找 User对象，如果找到，没找到.
 		// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-		User user = userRepository.findByUsername(username);
+		User user = null;
+		try {
+			user = userRepository.findByUsername(username);
+		} catch (Exception e) {
+			log.info("登陆校验发生异常：{}", e.getMessage());
+		}
 		log.info("验证结果：{}", username);
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();

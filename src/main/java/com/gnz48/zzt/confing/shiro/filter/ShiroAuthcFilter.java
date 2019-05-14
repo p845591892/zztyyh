@@ -23,6 +23,7 @@ import com.gnz48.zzt.vo.ResultVO;
  */
 public class ShiroAuthcFilter extends AccessControlFilter {
 
+	@SuppressWarnings("unused")
 	private Logger log = LoggerFactory.getLogger(ShiroAuthcFilter.class);
 
 	@Override

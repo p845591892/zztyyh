@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.gnz48.zzt.entity.system.User;
 import com.gnz48.zzt.repository.system.UserRepository;
 import com.gnz48.zzt.util.DateUtil;
-import com.gnz48.zzt.util.Mail;
 import com.gnz48.zzt.util.MathUtil;
 import com.gnz48.zzt.util.StringUtil;
 import com.gnz48.zzt.vo.UserVO;

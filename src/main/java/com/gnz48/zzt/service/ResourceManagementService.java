@@ -10,7 +10,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gnz48.zzt.dao.ResourceManagementDao;
 import com.gnz48.zzt.entity.QQCommunity;
-import com.gnz48.zzt.entity.snh48.RoomMessage;
 import com.gnz48.zzt.repository.CommentMonitorRepostiory;
 import com.gnz48.zzt.repository.DynamicMonitorRepository;
 import com.gnz48.zzt.repository.QQCommunityRepository;

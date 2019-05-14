@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 
+import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -31,13 +32,74 @@ public class ShiroConfig {
 	private Logger log = LoggerFactory.getLogger(ShiroConfig.class);
 
 	/**
+	 * @Description: 自定义Shiro域
+	 */
+	@Bean
+	public MyShiroRealm myShiroRealm() {
+		log.info("===============>> shiro-设置域");
+		MyShiroRealm myShiroRealm = new MyShiroRealm();
+		return myShiroRealm;
+	}
+
+	/**
+	 * EhCache管理器
+	 */
+	@Bean
+	public EhCacheManager ehCacheManager() {
+		log.info("===============>> shiro-设置EhCache缓存");
+		EhCacheManager ehCacheManager = new EhCacheManager();
+		ehCacheManager.setCacheManagerConfigFile("classpath:ehcache/ehcache.xml");
+		return ehCacheManager;
+	}
+	
+//	/**
+//	 * session管理器
+//	 */
+//	@Bean
+//	public DefaultWebSessionManager defaultWebSessionManager() {
+//		log.info("===============>> shiro-设置session");
+//		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
+//		defaultWebSessionManager.setSessionIdCookieEnabled(true);
+//		defaultWebSessionManager.setGlobalSessionTimeout(21600000);
+//		defaultWebSessionManager.setDeleteInvalidSessions(true);
+//		defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
+//		defaultWebSessionManager.setSessionIdUrlRewritingEnabled(false);
+//		return defaultWebSessionManager;
+//	}
+
+	/**
+	 * @Description: 安全管理器
+	 */
+	@Bean
+	public SecurityManager securityManager() {
+		log.info("===============>> shiro-设置安全管理器");
+		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+		securityManager.setRealm(myShiroRealm());
+		securityManager.setCacheManager(ehCacheManager());
+//		securityManager.setSessionManager(defaultWebSessionManager());
+		return securityManager;
+	}
+
+	/**
 	 * @Description: Shiro过滤器Bean工厂
 	 */
 	@Bean
 	public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
-		log.info("----->> shiro-设置过滤");
+		log.info("===============>> shiro-设置过滤");
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
+		// 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
+		shiroFilterFactoryBean.setLoginUrl("/login");
+		// 登录成功后要跳转的链接
+		shiroFilterFactoryBean.setSuccessUrl("/index");
+		// 未授权界面;
+		shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+		// 设置过滤方法
+		Map<String, Filter> filters = new HashMap<String, Filter>();
+		filters.put("authc", new ShiroAuthcFilter());
+		filters.put("perms", new ShiroPermsFilter());
+		shiroFilterFactoryBean.setFilters(filters);
+		
 		// 拦截器.
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		// 配置不会被拦截的链接 顺序判断
@@ -137,40 +199,8 @@ public class ShiroConfig {
 		 */
 		filterChainDefinitionMap.put("/data-visualization/room-message", "perms[message-visual:url]");// 可视化口袋消息数据跳转url
 
-		// 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-		shiroFilterFactoryBean.setLoginUrl("/login");
-		// 登录成功后要跳转的链接
-		shiroFilterFactoryBean.setSuccessUrl("/index");
-		// 未授权界面;
-		shiroFilterFactoryBean.setUnauthorizedUrl("/403");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
-		// 设置过滤方法
-		Map<String, Filter> filters = new HashMap<String, Filter>();
-		filters.put("authc", new ShiroAuthcFilter());
-		filters.put("perms", new ShiroPermsFilter());
-		shiroFilterFactoryBean.setFilters(filters);
 		return shiroFilterFactoryBean;
-	}
-
-	/**
-	 * @Description: 自定义Shiro域
-	 */
-	@Bean
-	public MyShiroRealm myShiroRealm() {
-		log.info("----->> shiro-设置域");
-		MyShiroRealm myShiroRealm = new MyShiroRealm();
-		return myShiroRealm;
-	}
-
-	/**
-	 * @Description: 安全管理器
-	 */
-	@Bean
-	public SecurityManager securityManager() {
-		log.info("----->> shiro-设置安全管理器");
-		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-		securityManager.setRealm(myShiroRealm());
-		return securityManager;
 	}
 
 	/**
@@ -178,7 +208,7 @@ public class ShiroConfig {
 	 */
 	@Bean
 	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
-		log.info("----->> shiro-设置注解");
+		log.info("===============>> shiro-设置注解");
 		AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
 		authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
 		return authorizationAttributeSourceAdvisor;
@@ -189,7 +219,7 @@ public class ShiroConfig {
 	 */
 	@Bean
 	public ShiroDialect shiroDialect() {
-		log.info("----->> shiro-设置thymeleaf标签");
+		log.info("===============>> shiro-设置thymeleaf标签");
 		ShiroDialect shiroDialect = new ShiroDialect();
 		return shiroDialect;
 	}

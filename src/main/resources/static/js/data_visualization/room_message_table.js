@@ -83,12 +83,25 @@ $(document).ready(function() {
 			title : "消息内容",
 			formatter : function(value, row, index) {
 				var msgObject = row.msgObject;
-				var msgContent = row.msgContent;
+                var msgContent = row.msgContent;
+                
 				if (msgObject == "IMAGE" || msgObject == "image") {
 					msgContent = msgContent.replace("<img>", "");
 					msgContent = msgContent.replace("[图片]", "");
-					return "<img src=\""+msgContent+"\" width=\"200\"/>";
-				} else {
+                    return "<img src=\"" + msgContent + "\" width=\"200\"/>";
+                    
+				} else if (msgObject == "live" || msgObject == "diantai" || msgObject == "LIVEPUSH") {
+                    var temp = null;
+                    if (msgContent.indexOf("<img>") != -1) {
+                        temp = msgContent.split("<img>");
+                        temp = temp[0] + "<br>" + "<img src=\"" + temp[1] + "\" width=\"200\"/>"
+                    } else if (msgContent.indexOf("[图片]" != -1)) {
+                        temp = msgContent.split("[图片]");
+                        temp = temp[0] + "<img src=\"" + temp[1] + "\" width=\"200\"/>"
+                    }
+                    return temp;
+
+                } else {
 					return msgContent;
 				}
 			}

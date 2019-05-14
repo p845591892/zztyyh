@@ -85,7 +85,7 @@ public class DateUtil {
 		Date date = new Date();// 取时间
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		calendar.add(calendar.DATE, amount);
+		calendar.add(Calendar.DATE, amount);
 		date = calendar.getTime(); // 这个时间就是日期往后推一天的结果
 		return getDate(date, format);
 	}
@@ -161,7 +161,7 @@ public class DateUtil {
 		Date date = new Date();// 取时间
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		calendar.add(calendar.MINUTE, min);
+		calendar.add(Calendar.MINUTE, min);
 		date = calendar.getTime();
 		return getDate(date, format);
 	}
