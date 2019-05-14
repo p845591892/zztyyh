@@ -48,6 +48,14 @@ spring:
           starttls:
             enable: true
             required: true
+  #上传文件配置
+  http:
+    multipart:
+      max-request-size: 15MB
+      
+#上传文件的外部静态根目录
+web:
+  upload-path: /Users/shiro/Documents/fileDepot/
   
 #MyBatis配置
 mybatis:
