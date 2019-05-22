@@ -20,6 +20,10 @@ spring:
     filters: stat,log4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     driverClassName: com.mysql.jdbc.Driver
+#Mac
+#    url: jdbc:mysql://localhost:3306/zztyyh?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
+#    username: root
+#    password: '0112'
 #服务器(本机)
     url: jdbc:mysql://172.16.0.6:3306/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
     username: zztyyh
@@ -37,6 +41,7 @@ spring:
     #禁止浏览器缓存
     cache: false
     content-type: text/html; charset=utf-8
+  #邮件配置
   mail:
     host: smtp.qq.com
     username: ${username}
@@ -48,6 +53,19 @@ spring:
           starttls:
             enable: true
             required: true
+  #上传文件配置
+  http:
+    multipart:
+      max-request-size: 15MB
+  #工作流配置
+  activiti:
+    database-schema-update: drop-create
+    history-level: full
+    check-process-definitions: false
+
+#上传文件的外部静态根目录
+web:
+  upload-path: file:${path}
   
 #MyBatis配置
 mybatis:
@@ -55,6 +73,8 @@ mybatis:
   mapper-locations: classpath:mappers/*Mapper.xml
   configuration:
     default-executor-type: simple
+
+#分页配置
 pagehelper:
   helper-dialect: mysql
   reasonable: true
