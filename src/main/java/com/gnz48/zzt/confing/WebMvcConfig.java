@@ -30,9 +30,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		log.info("设置静态资源");
-		
-		registry.addResourceHandler("/source/**").addResourceLocations("file:" + uploadPath);
+		registry.addResourceHandler("/source/**").addResourceLocations(uploadPath);
 		log.info("/source/**映射：{}", uploadPath);
+		
+		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/", "classpath:/templates/");
+		log.info("/**映射：{}, {}", "classpath:/static/", "classpath:/templates/");
 		
         super.addResourceHandlers(registry);
 	}

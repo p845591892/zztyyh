@@ -165,12 +165,13 @@
 
 	<!-- 工具容器 -->
 	<div id="toolbar" class="btn-group">
-		<!-- <label class="control-label ">消息内容：</label>
-		<input type="text" class="form-control" name="username">
-		<button id="btn_update" class="btn btn-primary"
-			onclick="updateVideoShow()" shiro:hasPermission="qqcommunity:update">
-			<i class="fa fa-pencil"></i> 修改
-		</button> -->
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="exampleInput1">消息内容：</label>
+                <input type="text" class="form-control input-sm" id="exampleInput1" name="msgContent" placeholder="模糊查询">
+            </div>
+            <button  id="btn_select" class="btn btn-info">查询</button> 
+        </form>
 	</div>
 
 	<!-- js placed at the end of the document so the pages load faster -->

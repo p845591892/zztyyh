@@ -22,6 +22,20 @@ public class ResultVO {
 	 * 数据
 	 */
 	private Object data;
+	
+	public ResultVO() {
+	}
+	
+	public ResultVO(Integer status, String cause) {
+		this.status = status;
+		this.cause = cause;
+	}
+	
+	public ResultVO(Integer status, String cause, Object data) {
+		this.status = status;
+		this.cause = cause;
+		this.data = data;
+	}
 
 	public Integer getStatus() {
 		return status;

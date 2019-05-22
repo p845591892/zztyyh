@@ -9,7 +9,18 @@
 			t.team_id = #{teamId},
 			t.team_name = #{teamName}, 
 			t.group_id = #{groupId}, 
-			t.group_name = #{groupName}
+			t.group_name = #{groupName},
+			t.abbr = #{abbr},
+			t.join_time = #{joinTime},
+			t.birthday = #{birthday},
+			t.birthplace = #{birthplace},
+			t.blood_type = #{bloodType},
+			t.constellation = #{constellation},
+			t.height = #{height},
+			t.hobbies = #{hobbies},
+			t.specialty = #{specialty},
+			t.history = #{history},
+			t.nickname = #{nickname}
 			<if test="topic != null and topic != ''">
 			,t.topic = #{topic}
 			</if>

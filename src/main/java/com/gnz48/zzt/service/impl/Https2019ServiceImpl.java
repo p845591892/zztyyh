@@ -60,6 +60,11 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	private static final String URL_ALL_MEMBER_LIST = "https://h5.48.cn/memberPage/member_mapping.json";
 	
 	/**
+	 * SNH48Group所有成员列表接口
+	 */
+	private static final String URL_MEMBER = "https://pocketapi.48.cn/user/api/v1/user/star/archives";
+	
+	/**
 	 * SNH48Group成员房间资料接口
 	 */
 	private static final String URL_MEMBER_ROOM = "https://pocketapi.48.cn/im/api/v1/im/room/info/type/source";
@@ -112,18 +117,44 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			/* 获取成员普通资料 */
 			String key = iterator.next();
 			JSONObject memberObject = jsonObject.getJSONObject(key);
+			long memberId = memberObject.getLong("memberId");
+			memberObject = this.getMember(memberId);
+			// 若取不到，则结束该成员资料的同步
+			if (memberObject == null) {
+				continue;
+			}
+			
+			JSONObject content = memberObject.getJSONObject("content");
+			JSONObject starInfo = content.getJSONObject("starInfo");
+			JSONArray history = content.getJSONArray("history");
+			
 			Member member = new Member();
-			member.setId(memberObject.getLong("memberId"));// 成员ID
-			member.setAvatar(super.getImageUrl(memberObject.getString("memberAvatar")));// 成员头像地址
-			member.setName(memberObject.getString("memberName"));// 成员名字
-			member.setPinyin(memberObject.getString("memberPinyin"));// 成员名字拼音
-			member.setTeamId(memberObject.getLong("teamId"));// 所属队伍ID
-			member.setTeamName(memberObject.getString("teamName"));// 所属队伍名字
-			member.setGroupId(memberObject.getLong("groupId"));// 所属团体ID
-			member.setGroupName(memberObject.getString("groupName"));// 所属团体名字
+			member.setId(memberId);// 成员ID
+			member.setAvatar(super.getImageUrl(starInfo.getString("starAvatar")));// 成员头像地址
+			member.setName(starInfo.getString("starName"));// 名字
+			member.setPinyin(starInfo.getString("pinyin"));// 名字拼音
+			member.setAbbr(starInfo.getString("abbr"));// 名字缩写
+			member.setBirthday(starInfo.getString("birthday"));// 生日
+			member.setBirthplace(starInfo.getString("birthplace"));// 出生地
+			member.setBloodType(starInfo.getString("bloodType"));// 血型
+			member.setConstellation(starInfo.getString("constellation"));// 星座
+			member.setHeight(starInfo.getInt("height"));// 身高
+			member.setTeamId(starInfo.getLong("starTeamId"));// 所属队伍ID
+			member.setTeamName(starInfo.getString("starTeamName"));// 所属队伍名字
+			member.setGroupId(starInfo.getLong("starGroupId"));// 所属团体ID
+			member.setGroupName(starInfo.getString("starGroupName"));// 所属团体名字
+			member.setHistory(history.toString());// 成员历史
+			member.setHobbies(starInfo.getString("hobbies"));// 爱好
+			try {
+				member.setJoinTime(DateUtil.getDateFormat(starInfo.getString("joinTime"), "yyyy-MM-dd"));// 加入时间
+			} catch (JSONException | ParseException e) {
+				e.printStackTrace();
+			}
+			member.setSpecialty(starInfo.getString("nickname"));// 昵称
+			member.setNickname(starInfo.getString("specialty"));// 特长
 
 			/* 获取成员房间资料 */
-			JSONObject roomObject = this.getMemberRoom(memberObject.getLong("memberId"), 0, 5);
+			JSONObject roomObject = this.getMemberRoom(memberId, 0, 5);
 			// 若取不到，则结束该成员资料的同步
 			if (roomObject == null) {
 				continue;
@@ -169,6 +200,35 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	}
 	
 	/**
+	 * 发送请求获取SNH48Group成员的个人资料
+	 * @param memberId 成员ID
+	 * @return 成员个人资料的json对象
+	 */
+	private JSONObject getMember(long memberId) {
+		Https https = new Https();
+		/* 请求头 */
+		Map<String, String> requestPropertys = new HashMap<String, String>();
+		requestPropertys.put("Accept", "*/*");
+		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
+		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+		/* 请求参数 */
+		String payloadJson = "{\"memberId\":\"" + String.valueOf(memberId) + "\"}";
+		/* 发送请求 */
+		String memberJson = https.setUrl(URL_MEMBER)
+													.setDataType("POST")
+													.setRequestProperty(requestPropertys)
+													.setPayloadJson(payloadJson)
+													.send();
+		JSONObject memberObject = new JSONObject(memberJson);
+		if (memberObject.getBoolean("success")) {
+			return memberObject;
+		} else {
+			log.info("获取成员资料失败。原因: {}。memberId = [{}]", memberObject.getString("message"), memberId);
+			return null;
+		}
+	}
+	
+	/**
 	 * 发送请求获取SNH48Group成员的房间资料
 	 * @param sourceId 成员ID
 	 * @param type 请求类型(默认填0，暂不推荐其他参数。)
@@ -201,7 +261,7 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		if (roomObject.getBoolean("success") || roomObject.getString("message").equals("房间不存在")) {
 			return roomObject;
 		}
-		log.info("获取成员房间资料失败。原因: {}。成员ID = {}；当前token = {}", roomObject.getString("message"), sourceId, TOKEN);
+		log.info("获取成员房间资料失败。原因: {}。sourceId = [{}]；token = [{}]", roomObject.getString("message"), sourceId, TOKEN);
 		this.setNewToken();
 		again -= 1;
 		return getMemberRoom(sourceId, type, again);

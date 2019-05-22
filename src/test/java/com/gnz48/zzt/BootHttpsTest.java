@@ -8,6 +8,7 @@
 //import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.test.context.junit4.SpringRunner;
 //
+//import com.gnz48.zzt.service.ActivitiService;
 //import com.gnz48.zzt.service.Https2019Service;
 //
 ///**
@@ -56,6 +57,17 @@
 //	@Test
 //	public void syncDynamicTest() {
 //		https2019Service.syncDynamic();
+//	}
+//	
+//	@Autowired
+//	private ActivitiService activitiService;
+//	
+//	/**
+//	 * 同步用户 角色 用户角色到activiti表中
+//	 */
+//	@Test
+//	public void syncdataAcitiviti() {
+//		activitiService.syncdata();
 //	}
 //
 //}
