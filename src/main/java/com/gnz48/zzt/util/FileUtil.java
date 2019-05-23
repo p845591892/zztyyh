@@ -19,6 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUtil extends org.apache.velocity.texen.util.FileUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+	
+	/**
+	 * java文件的16进制文件头
+	 */
+	public static final String JAVA_CODE = "7061636B";
 
 	/**
 	 * 头像相对路径
@@ -130,7 +135,7 @@ public class FileUtil extends org.apache.velocity.texen.util.FileUtil {
 	public static File getFile(String path) {
 		File tempFile = new File(path);
 		if (!tempFile.exists()) {
-			mkdir(path);
+			log.info(mkdir(path));
 		}
 		return tempFile;
 	}
@@ -173,7 +178,6 @@ public class FileUtil extends org.apache.velocity.texen.util.FileUtil {
 			}
 			builder.append(hv);
 		}
-		System.out.println(builder.toString()); 
 		return builder.toString();
 	}
 

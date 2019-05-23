@@ -33,11 +33,6 @@ public class FileContorller {
 	private String uploadPath;
 	
 	/**
-	 * java文件的16进制文件头
-	 */
-	public static final String JAVA_CODE = "7061636B";
-	
-	/**
 	 * @Description: 测试
 	 * @author JuFF_白羽
 	 */
@@ -87,7 +82,7 @@ public class FileContorller {
 		} else if (multipartFile.isEmpty()) {
 			result.setStatus(400);
 			result.setCause("文件内容不能为空");
-		} else if (!FileUtil.getFileHeader(multipartFile).equals(JAVA_CODE)) {
+		} else if (!FileUtil.getFileHeader(multipartFile).equals(FileUtil.JAVA_CODE)) {
 			result.setStatus(400);
 			result.setCause("请上传java文件");
 		} else {
