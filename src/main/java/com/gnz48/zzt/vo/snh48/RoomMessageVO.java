@@ -11,47 +11,15 @@ public class RoomMessageVO implements Serializable {
 
 	private static final long serialVersionUID = 7519962805620855349L;
 
-	/**
-	 * 消息ID，对应msgidClient字段
-	 */
 	private String id;
-
-	/**
-	 * 发送消息时间
-	 */
 	private String msgTime;
-
-	/**
-	 * 发送人姓名
-	 */
 	private String senderName;
-
-	/**
-	 * 发送人ID
-	 */
 	private Long senderId;
-
-	/**
-	 * 所属房间ID
-	 */
 	private Long roomId;
-
-	/**
-	 * 消息类型: text,image,live,diantai...
-	 */
 	private String msgObject;
-
-	/**
-	 * 消息内容: text类型
-	 */
 	private String msgContent;
-
-	/**
-	 * 是否发送
-	 * <p>
-	 * 这里是指是否执行过发送任务，并不是说一定会发送到指定的QQ
-	 */
 	private String isSend;
+	private String searchText;
 
 	public String getId() {
 		return id;
@@ -115,6 +83,14 @@ public class RoomMessageVO implements Serializable {
 
 	public void setIsSend(String isSend) {
 		this.isSend = isSend;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.gnz48.zzt.repository.snh48;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ import com.gnz48.zzt.entity.snh48.Member;
  * @author JuFF_白羽
  * @date 2018年7月11日 上午10:21:53
  */
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecificationExecutor<Member> {
 
 	/**
 	 * @Description: 根据房间监控状态获取成员信息

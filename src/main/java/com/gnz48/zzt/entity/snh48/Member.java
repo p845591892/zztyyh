@@ -159,7 +159,7 @@ public class Member {
 	/**
 	 * 昵称
 	 */
-	@Column(name = "NICKNAME", length = 100)
+	@Column(name = "NICKNAME", length = 50)
 	private String nickname;
 
 	public Long getId() {

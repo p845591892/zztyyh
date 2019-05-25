@@ -17,6 +17,7 @@
 //import org.slf4j.LoggerFactory;
 //
 //import com.gnz48.zzt.util.Https;
+//import com.gnz48.zzt.util.StringUtil;
 //
 ///**
 // * Https请求相关测试类 对应口袋48版本:6.0.0 不启动Spring Boot
@@ -38,34 +39,36 @@
 //		Https https = new Https();
 //
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
-//		requestPropertys.put("Accept", "application/json, text/plain, */*");
+//		requestPropertys.put("Accept", "*/*");
 //		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-//		requestPropertys.put("User-Agent",
-//				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+//		requestPropertys.put("User-Agent", "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)");
 //		requestPropertys.put("appInfo",
-//				"{\"vendor\":\"a\",\"appType\":\"POCKET48\",\"deviceName\":\"b\",\"deviceId\":\"c\",\"appVersion\":\"d\",\"appBuild\":\"e\",\"osType\":\"android\",\"osVersion\":\"g\"}");
+//				"{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}");
 //		requestPropertys.put("token",
-//				"I3ywX1xiTb/7aoDYbnIXy4rAQjqCsDey/fgpHN7AXfGSRSscBivLLjxYbpHUXl7AfpqF5oEPkPNdFYbr01K6eQ==");
+//				"0oQjDsc2CyV9VfsovvfHGRKTKWXFnswKAXdmu7V7Ehx6M/fvj/YKgcQ5uvbF3VnpQDY/9BruxlI=");
 //
 //		String roomJson = https.setUrl("https://pocketapi.48.cn/im/api/v1/im/room/info/type/source").setDataType("POST")
 //				.setRequestProperty(requestPropertys).setPayloadJson("{\"sourceId\":\"6742\",\"type\":\"0\"}").send();
 //		log.info("json = {}", roomJson);
 //	}
-//	
+//
 //	/**
 //	 * 获取成员资料
 //	 */
 //	@Test
 //	public void getMemberTest() {
 //		Https https = new Https();
-//		
+//
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
 //		requestPropertys.put("Accept", "*/*");
 //		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-//		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
-//		String memberJson = https.setUrl("https://pocketapi.48.cn/user/api/v1/user/star/archives").setDataType("POST").setRequestProperty(requestPropertys).setPayloadJson("{\"memberId\":\"1\"}").send();
+//		requestPropertys.put("User-Agent",
+//				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+//		String memberJson = https.setUrl("https://pocketapi.48.cn/user/api/v1/user/star/archives").setDataType("POST")
+//				.setRequestProperty(requestPropertys).setPayloadJson("{\"memberId\":\"459991\"}").send();
 //		JSONObject memberObject = new JSONObject(memberJson);
-//		
+//
+//		System.out.println(memberJson);
 //		System.out.println(memberObject.getJSONObject("content").getJSONArray("history").toString());
 //	}
 //
@@ -77,21 +80,18 @@
 //		Https https = new Https();
 //		/* 请求参数 */
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
-//		requestPropertys.put("Accept", "application/json, text/plain, */*");
+//		requestPropertys.put("Accept", "*/*");
 //		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-//		requestPropertys.put("User-Agent",
-//				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
-//		String payloadJson = "{\"mobile\":\"18824171764\",\"pwd\":\"woshi182tidu\"}";
+//		requestPropertys.put("User-Agent", "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)");
+//		requestPropertys.put("appInfo",
+//				"{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}");
+////		String payloadJson = "{\"mobile\":\"18824171764\",\"pwd\":\"woshi182tidu\"}";
+//		String payloadJson = "{\"mobile\": \"18824171764\",\"pwd\": \"woshi182tidu\"}";
 //
-//		String login = https.setUrl("https://xsaiting.com/pocket48/static/proxy.php?f=login").setDataType("POST")
+//		String login = https.setUrl("https://pocketapi.48.cn/user/api/v1/login/app/mobile").setDataType("POST")
 //				.setPayloadJson(payloadJson).setRequestProperty(requestPropertys).send();
 //		JSONObject loginObject = new JSONObject(login);
-//		if (!loginObject.getBoolean("success")) {
-//			log.info("获取Token失败");
-//			return;
-//		}
-//		String token = loginObject.getJSONObject("content").getJSONObject("userInfo").getString("token");
-//		log.info("token = {}", token);
+//		System.out.println(loginObject.toString());
 //	}
 //
 //	/**
@@ -130,7 +130,7 @@
 //			Class<?> cls = loader.loadClass("com.gnz48.zzt.util.ImageUtil");// 加载外部类
 //			Object object = cls.newInstance();// 实例化
 //			Method method = cls.getMethod("setImage", Image.class);// 获得方法
-//			method.invoke(null, null);//执行方法
+//			method.invoke(null, null);// 执行方法
 //
 //		} catch (MalformedURLException e) {
 //			e.printStackTrace();
@@ -149,6 +149,15 @@
 //		} catch (InvocationTargetException e) {
 //			e.printStackTrace();
 //		}
+//	}
+//
+//	@Test
+//	public void stringTest() {
+//		System.out.println(StringUtil.isEnglish(""));
+//		System.out.println(StringUtil.isEnglish(" "));
+//		System.out.println(StringUtil.isEnglish("你好"));
+//		System.out.println(StringUtil.isEnglish("ABC"));
+//		System.out.println(StringUtil.isEnglish("abc你好"));
 //	}
 //
 //}

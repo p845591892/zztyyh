@@ -54,13 +54,18 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 */
 	private String TOKEN = "";
 	
+	private static final String HEADER_ACCEPT = "*/*";
+	private static final String HEADER_CONTENT_TYPE = "application/json;charset=UTF-8";
+	private static final String HEADER_USER_AGENT = "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)";
+	private static final String HEADER_APPINFO = "{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}";
+	
 	/**
 	 * SNH48Group所有成员列表接口
 	 */
 	private static final String URL_ALL_MEMBER_LIST = "https://h5.48.cn/memberPage/member_mapping.json";
 	
 	/**
-	 * SNH48Group所有成员列表接口
+	 * SNH48Group成员资料接口
 	 */
 	private static final String URL_MEMBER = "https://pocketapi.48.cn/user/api/v1/user/star/archives";
 	
@@ -70,9 +75,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	private static final String URL_MEMBER_ROOM = "https://pocketapi.48.cn/im/api/v1/im/room/info/type/source";
 	
 	/**
-	 * 登陆口袋48获取token(小赛艇聚聚项目提供的接口)
+	 * 登陆口袋48接口
 	 */
-	private static final String URL_TOKEN = "https://xsaiting.com/pocket48/static/proxy.php?f=login";
+	private static final String URL_TOKEN = "https://pocketapi.48.cn/user/api/v1/login/app/mobile";
 	
 	/**
 	 * SNH48Group成员房间消息接口
@@ -150,9 +155,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			} catch (JSONException | ParseException e) {
 				e.printStackTrace();
 			}
-			member.setSpecialty(starInfo.getString("nickname"));// 昵称
-			member.setNickname(starInfo.getString("specialty"));// 特长
-
+			member.setSpecialty(starInfo.getString("specialty"));// 特长
+			member.setNickname(starInfo.getString("nickname"));// 昵称
+			
 			/* 获取成员房间资料 */
 			JSONObject roomObject = this.getMemberRoom(memberId, 0, 5);
 			// 若取不到，则结束该成员资料的同步
@@ -208,9 +213,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", "*/*");
-		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+		requestPropertys.put("Accept", HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
 		/* 请求参数 */
 		String payloadJson = "{\"memberId\":\"" + String.valueOf(memberId) + "\"}";
 		/* 发送请求 */
@@ -244,10 +249,10 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", "application/json, text/plain, */*");
-		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
-		requestPropertys.put("appInfo", "{\"vendor\":\"a\",\"appType\":\"POCKET48\",\"deviceName\":\"b\",\"deviceId\":\"c\",\"appVersion\":\"d\",\"appBuild\":\"e\",\"osType\":\"android\",\"osVersion\":\"g\"}");
+		requestPropertys.put("Accept", HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
+		requestPropertys.put("appInfo", HEADER_APPINFO);
 		requestPropertys.put("token", TOKEN);
 		/* 请求参数 */
 		String payloadJson = "{\"sourceId\":\"" + String.valueOf(sourceId) + "\",\"type\":\"" + String.valueOf(type) + "\"}";
@@ -275,9 +280,10 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", "application/json, text/plain, */*");
-		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+		requestPropertys.put("Accept", HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
+		requestPropertys.put("appInfo", HEADER_APPINFO);
 		/* 请求参数 */
 		String payloadJson = "{\"mobile\":\""+ USERNAME +"\",\"pwd\":\""+ PASSWORD +"\"}";
 		/* 发送请求 */
@@ -366,9 +372,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", "application/json, text/plain, */*");
-		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+		requestPropertys.put("Accept", HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
 		requestPropertys.put("token", TOKEN);
 		/* 请求参数 */
 		String payloadJson = "{\"ownerId\":\""+memberId+"\",\"needTop1Msg\":\"false\",\"nextTime\":\"0\",\"roomId\":\""+roomId+"\"}";
@@ -462,9 +468,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", "application/json, text/plain, */*");
-		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-		requestPropertys.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+		requestPropertys.put("Accept", HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
 		/* 请求参数 */
 		String payloadJson = "{\"userId\":\"" + userId + "\",\"needMuteInfo\":\"True\"}";
 		String baseUserInfoJson = https.setDataType("POST")

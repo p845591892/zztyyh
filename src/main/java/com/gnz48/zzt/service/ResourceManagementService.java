@@ -1,8 +1,20 @@
 package com.gnz48.zzt.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,12 +22,18 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gnz48.zzt.dao.ResourceManagementDao;
 import com.gnz48.zzt.entity.QQCommunity;
+import com.gnz48.zzt.entity.snh48.Member;
+import com.gnz48.zzt.entity.snh48.RoomMessage;
 import com.gnz48.zzt.repository.CommentMonitorRepostiory;
 import com.gnz48.zzt.repository.DynamicMonitorRepository;
 import com.gnz48.zzt.repository.QQCommunityRepository;
 import com.gnz48.zzt.repository.RoomMonitorRepository;
+import com.gnz48.zzt.repository.snh48.MemberRepository;
+import com.gnz48.zzt.repository.snh48.RoomMessageRepository;
+import com.gnz48.zzt.util.StringUtil;
 import com.gnz48.zzt.vo.CommentMonitorVO;
 import com.gnz48.zzt.vo.DynamicMonitorVO;
+import com.gnz48.zzt.vo.MemberVO;
 import com.gnz48.zzt.vo.RoomMonitorVO;
 import com.gnz48.zzt.vo.snh48.RoomMessageVO;
 
@@ -29,41 +47,31 @@ import com.gnz48.zzt.vo.snh48.RoomMessageVO;
 @Transactional
 public class ResourceManagementService {
 
-	/**
-	 * QQ群监控口袋房间表DAO组件
-	 */
 	@Autowired
 	private RoomMonitorRepository roomMonitorRepository;
 
-	/**
-	 * （yyh）QQ群信息表DAO组件
-	 */
 	@Autowired
 	private QQCommunityRepository qqCommunityRepository;
 
-	/**
-	 * 摩点项目评论监控配置表DAO组件
-	 */
 	@Autowired
 	private CommentMonitorRepostiory commentMonitorRepostiory;
 
-	/**
-	 * 微博动态监控配置表DAO组件
-	 */
 	@Autowired
 	private DynamicMonitorRepository dynamicMonitorRepository;
-	
-	/**
-	 * 资源管理服务DAO组件
-	 */
+
 	@Autowired
 	private ResourceManagementDao resourceManagementDao;
+
+	@Autowired
+	private MemberRepository memberRepository;
+
+	@Autowired
+	private RoomMessageRepository roomMessageRepository;
 
 	/**
 	 * @Description: 获取成员房间的监控信息列表的HTML
 	 * @author JuFF_白羽
-	 * @param roomId
-	 *            房间ID
+	 * @param roomId 房间ID
 	 * @return String Table的DetailView中的HTML内容
 	 */
 	public String getRoomMonitorTableHtml(Long roomId) {
@@ -115,8 +123,7 @@ public class ResourceManagementService {
 	/**
 	 * @Description: 获取成员房间监控的新增弹窗内容
 	 * @author JuFF_白羽
-	 * @param roomId
-	 *            房间ID
+	 * @param roomId 房间ID
 	 * @return String 新增弹窗的HTML
 	 */
 	public String getMeberAddMonitorLayerHtml(Long roomId) {
@@ -156,8 +163,7 @@ public class ResourceManagementService {
 	/**
 	 * @Description: 获取摩点项目的监控信息列表
 	 * @author JuFF_白羽
-	 * @param projectId
-	 *            摩点项目ID
+	 * @param projectId 摩点项目ID
 	 * @return String 摩点集资记录监控列表的HTML
 	 */
 	public String getCommentMonitorTableHtml(Long projectId) {
@@ -201,8 +207,7 @@ public class ResourceManagementService {
 	/**
 	 * @Description: 获取摩点项目监控的新增弹窗内容
 	 * @author JuFF_白羽
-	 * @param projectId
-	 *            摩点项目ID
+	 * @param projectId 摩点项目ID
 	 * @return String 新增弹窗的HTML
 	 */
 	public String getModianAddMonitorLayerHtml(Long projectId) {
@@ -234,8 +239,7 @@ public class ResourceManagementService {
 	/**
 	 * @Description: 获取微博动态监控列表
 	 * @author JuFF_白羽
-	 * @param userId
-	 *            微博用户ID
+	 * @param userId 微博用户ID
 	 * @return String 微博动态监控列表的HTML
 	 */
 	public String getDynamicMonitorTableHtml(Long userId) {
@@ -310,7 +314,7 @@ public class ResourceManagementService {
 	 * @Description: 分页获取口袋房间消息
 	 * @author JuFF_白羽
 	 * @param pageNumber 当前页数
-	 * @param pageSize 每页数据条数
+	 * @param pageSize   每页数据条数
 	 * @return PageInfo<RoomMessage> 返回PageInfo的口袋房间消息表
 	 */
 	public PageInfo<RoomMessageVO> getRoomMessage(Integer pageNumber, Integer pageSize) {
@@ -318,6 +322,110 @@ public class ResourceManagementService {
 		List<RoomMessageVO> roomMessages = resourceManagementDao.findRoomMessage();
 		PageInfo<RoomMessageVO> pageInfo = new PageInfo<RoomMessageVO>(roomMessages);
 		return pageInfo;
+	}
+
+	/**
+	 * 分页获取成员列表
+	 * 
+	 * @param pageNumber 当前页数
+	 * @param pageSize   每页条数
+	 * @param vo         匹配参数对象
+	 * @return Page<Member> 返回Page的成员列表
+	 */
+	public Page<Member> getMembers(Integer pageNumber, Integer pageSize, MemberVO vo) {
+		// 条件对象
+		Specification<Member> specification = new Specification<Member>() {
+
+			@Override
+			public Predicate toPredicate(Root<Member> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				String groupName = vo.getGroupName();
+				String teamName = vo.getTeamName();
+				String roomMonitor = vo.getRoomMonitor();
+				String name = vo.getName();
+				String abbr = vo.getAbbr();
+
+				List<Predicate> predicates = new ArrayList<Predicate>();
+
+				if (!StringUtil.isEmpty(groupName) && !groupName.equals("ALL")) {// 匹配团体名称
+					Predicate predicate = cb.equal(root.get("groupName").as(String.class), groupName.trim());
+					predicates.add(predicate);
+				}
+				if (!StringUtil.isEmpty(teamName) && !teamName.equals("ALL")) {// 匹配队伍名称
+					Predicate predicate = cb.equal(root.get("teamName").as(String.class), teamName.trim());
+					predicates.add(predicate);
+				}
+				if (!StringUtil.isEmpty(roomMonitor) && !roomMonitor.equals("ALL")) {// 匹配房间监控状态
+
+					Predicate predicate = cb.equal(root.get("roomMonitor").as(Integer.class),
+							Integer.parseInt(roomMonitor.trim()));
+					predicates.add(predicate);
+				}
+				if (!StringUtil.isEmpty(name)) {// 模糊匹配成员名
+					Predicate predicate = cb.like(root.get("name").as(String.class), "%" + name.trim() + "%");
+					predicates.add(predicate);
+				}
+				if (!StringUtil.isEmpty(abbr)) {// 模糊匹配成员名拼音缩写
+					Predicate predicate = cb.like(root.get("abbr").as(String.class), "%" + abbr.trim()+ "%");
+					predicates.add(predicate);
+				}
+
+				return cb.and(predicates.toArray(new Predicate[0]));
+			}
+		};
+		// 分页对象
+		Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
+
+		Page<Member> members = null;
+		try {
+			members = memberRepository.findAll(specification, pageable);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return members;
+	}
+
+	/**
+	 * 分页获取口袋房间消息列表
+	 * 
+	 * @param pageNumber 当前页数
+	 * @param pageSize   每页条数
+	 * @param vo         房间消息参数对象
+	 * @return Page<RoomMessage> 返回Page的房间消息列表
+	 */
+	public Page<RoomMessage> getRoomMessages(Integer pageNumber, Integer pageSize, RoomMessageVO vo) {
+		// 条件对象
+		Specification<RoomMessage> specification = new Specification<RoomMessage>() {
+
+			@Override
+			public Predicate toPredicate(Root<RoomMessage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				String senderName = vo.getSenderName();
+				String msgContent = vo.getMsgContent();
+
+				List<Predicate> predicates = new ArrayList<Predicate>();
+
+				if (!StringUtil.isEmpty(senderName)) {// 模糊匹配发送人姓名
+					Predicate predicate = cb.like(root.get("senderName").as(String.class), "%" + senderName.trim() + "%");
+					predicates.add(predicate);
+				}
+				if (!StringUtil.isEmpty(msgContent)) {// 模糊匹配消息内容
+					Predicate predicate = cb.like(root.get("msgContent").as(String.class), "%" + msgContent.trim() + "%");
+					predicates.add(predicate);
+				}
+				return cb.or(predicates.toArray(new Predicate[0]));
+			}
+		};
+		// 排序对象
+		Sort sort = new Sort(Direction.DESC, "msgTime");
+		// 分页对象
+		Pageable pageable = new PageRequest(pageNumber - 1, pageSize, sort);
+		
+		Page<RoomMessage> roomMessages = null;
+		try {
+			roomMessages = roomMessageRepository.findAll(pageable);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return roomMessages;
 	}
 
 }

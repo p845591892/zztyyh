@@ -16,8 +16,7 @@ $(document).ready(function() {
 			checkbox : true
 		}, {
 			field : "id",
-			title : "项目ID",
-			visible : false
+			title : "项目ID"
 		}, {
 			field : "name",
 			title : "项目名称"

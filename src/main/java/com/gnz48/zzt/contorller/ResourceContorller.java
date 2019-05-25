@@ -11,11 +11,13 @@ import com.gnz48.zzt.repository.QQCommunityRepository;
 import com.gnz48.zzt.repository.QuartzConfigRepository;
 import com.gnz48.zzt.repository.RoomMonitorRepository;
 import com.gnz48.zzt.repository.modian.MoDianPoolProjectRepository;
-import com.gnz48.zzt.repository.snh48.MemberRepository;
 import com.gnz48.zzt.repository.weibo.WeiboUserRepository;
 import com.gnz48.zzt.service.ResourceManagementService;
 import com.gnz48.zzt.service.SystemManageService;
+import com.gnz48.zzt.util.StringUtil;
+import com.gnz48.zzt.vo.MemberVO;
 import com.gnz48.zzt.vo.ResultVO;
+import com.gnz48.zzt.vo.snh48.RoomMessageVO;
 
 /**
  * @ClassName: ResourceManagementApi
@@ -28,12 +30,6 @@ import com.gnz48.zzt.vo.ResultVO;
 @RestController
 @RequestMapping("/resource")
 public class ResourceContorller {
-
-	/**
-	 * 成员表DAO组件
-	 */
-	@Autowired
-	private MemberRepository memberRepository;
 
 	/**
 	 * QQ群监控口袋房间表DAO组件
@@ -78,14 +74,22 @@ public class ResourceContorller {
 	private SystemManageService systemManageService;
 
 	/**
-	 * @Description: 获取成员信息列表
+	 * @Description: 获取成员列表
 	 * @author JuFF_白羽
 	 */
-	@GetMapping("/meber")
-	public ResultVO getMemberList() {
+	@GetMapping("/member")
+	public ResultVO getMemberList(@RequestParam(defaultValue = "1") Integer pageNumber,
+			@RequestParam(defaultValue = "15") Integer pageSize, MemberVO vo) {
+		if (!StringUtil.isEmpty(vo.getSearchText())) {
+			String str = vo.getSearchText();
+			vo.setAbbr(StringUtil.isEnglish(str) ? str : null);
+			vo.setName(StringUtil.isChinese(str) ? str : null);
+		}
+
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
-		result.setData(memberRepository.findAll());
+		result.setCause("success");
+		result.setData(resourceManagementService.getMembers(pageNumber, pageSize, vo));
 		return result;
 	}
 
@@ -97,6 +101,7 @@ public class ResourceContorller {
 	public ResultVO getRoomMonitorTableHtml(@PathVariable Long roomId) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(resourceManagementService.getRoomMonitorTableHtml(roomId));
 		return result;
 	}
@@ -109,6 +114,7 @@ public class ResourceContorller {
 	public ResultVO getMeberAddMonitorLayerHtml(@PathVariable Long roomId) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(resourceManagementService.getMeberAddMonitorLayerHtml(roomId));
 		return result;
 	}
@@ -121,6 +127,7 @@ public class ResourceContorller {
 	public ResultVO getRoomMonitorKeyword(@PathVariable Long id) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(roomMonitorRepository.findOne(id));
 		return result;
 	}
@@ -133,6 +140,7 @@ public class ResourceContorller {
 	public ResultVO getQQCommunityList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(qqCommunityRepository.findAll());
 		return result;
 	}
@@ -145,6 +153,7 @@ public class ResourceContorller {
 	public ResultVO getMoDianList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(moDianPoolProjectRepository.findOrderByEndTimeDesc());
 		return result;
 	}
@@ -157,6 +166,7 @@ public class ResourceContorller {
 	public ResultVO getCommentMonitorTableHtml(@PathVariable Long projectId) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(resourceManagementService.getCommentMonitorTableHtml(projectId));
 		return result;
 	}
@@ -169,6 +179,7 @@ public class ResourceContorller {
 	public ResultVO getModianAddMonitorLayerHtml(@PathVariable Long projectId) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(resourceManagementService.getModianAddMonitorLayerHtml(projectId));
 		return result;
 	}
@@ -181,6 +192,7 @@ public class ResourceContorller {
 	public ResultVO getWeiboList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(weiboUserRepository.findOrderByFollowersCountDesc());
 		return result;
 	}
@@ -193,6 +205,7 @@ public class ResourceContorller {
 	public ResultVO getDynamicMonitorTableHtml(@PathVariable Long userId) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(resourceManagementService.getDynamicMonitorTableHtml(userId));
 		return result;
 	}
@@ -205,6 +218,7 @@ public class ResourceContorller {
 	public ResultVO getWeiboAddMonitorLayerHtml(@PathVariable Long userId) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(resourceManagementService.getWeiboAddMonitorLayerHtml(userId));
 		return result;
 	}
@@ -217,6 +231,7 @@ public class ResourceContorller {
 	public ResultVO getQuartzConfingList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(quartzConfigRepository.findAll());
 		return result;
 	}
@@ -229,6 +244,7 @@ public class ResourceContorller {
 	public ResultVO getSystemUserList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(systemManageService.getUsers());
 		return result;
 	}
@@ -241,6 +257,7 @@ public class ResourceContorller {
 	public ResultVO getSystemRoleList() {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(systemManageService.getRoles());
 		return result;
 	}
@@ -253,6 +270,7 @@ public class ResourceContorller {
 	public ResultVO getSystemUserHaventRole(@PathVariable Long uid) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(systemManageService.getHaventRolesByUid(uid));
 		return result;
 	}
@@ -289,6 +307,7 @@ public class ResourceContorller {
 	public ResultVO getSystemRoleHavePermission(Long rid) {
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
+		result.setCause("success");
 		result.setData(systemManageService.getHavePermissionsByRid(rid));
 		return result;
 	}
@@ -304,17 +323,23 @@ public class ResourceContorller {
 		result.setData(systemManageService.getSystemPermission(id, pid));
 		return result;
 	}
-	
+
 	/**
 	 * @Description: 获取同步的房间消息
 	 * @author JuFF_白羽
 	 */
 	@GetMapping("/room-message")
 	public ResultVO getRoomMessage(@RequestParam(defaultValue = "1") Integer pageNumber,
-			@RequestParam(defaultValue = "15") Integer pageSize) {
+			@RequestParam(defaultValue = "15") Integer pageSize, RoomMessageVO vo) {
+		if (!StringUtil.isEmpty(vo.getSearchText())) {
+			vo.setSenderName(vo.getSearchText());
+			vo.setMsgContent(vo.getSearchText());
+		}
+		
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
-		result.setData(resourceManagementService.getRoomMessage(pageNumber, pageSize));
+		result.setCause("success");
+		result.setData(resourceManagementService.getRoomMessages(pageNumber, pageSize, vo));
 		return result;
 	}
 

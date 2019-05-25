@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import com.gnz48.zzt.entity.snh48.RoomMessage;
@@ -14,7 +15,7 @@ import com.gnz48.zzt.entity.snh48.RoomMessage;
  * @author JuFF_白羽
  * @date 2018年7月11日 下午6:44:50
  */
-public interface RoomMessageRepository extends JpaRepository<RoomMessage, String> {
+public interface RoomMessageRepository extends JpaRepository<RoomMessage, String>, JpaSpecificationExecutor<RoomMessage> {
 
 	/**
 	 * @Title: findByRoomIdAndIsSendOrderByMsgTimeAsc
