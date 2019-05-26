@@ -12,6 +12,8 @@
 //
 //import org.json.JSONArray;
 //import org.json.JSONObject;
+//import org.jsoup.nodes.Element;
+//import org.jsoup.select.Elements;
 //import org.junit.Test;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -158,6 +160,29 @@
 //		System.out.println(StringUtil.isEnglish("你好"));
 //		System.out.println(StringUtil.isEnglish("ABC"));
 //		System.out.println(StringUtil.isEnglish("abc你好"));
+//	}
+//	
+//	@Test
+//	public void elementTest() {
+//		String a = "<li> \n" + 
+//				" <div class=\"sub-comment-txt\"> \n" + 
+//				"  <a href=\"https://me.modian.com/u/detail?uid=2546194\"><span>GNZ48张润应援会</span></a> 回复 \n" + 
+//				"  <a href=\"https://me.modian.com/u/detail?uid=2546194\"><span>GNZ48张润应援会</span></a>: 代投 \n" + 
+//				" </div> \n" + 
+//				" <div class=\"sub-b\" clearfix> \n" + 
+//				"  <span class=\"sub-time\">2018-10-12 01:10</span> \n" + 
+//				"  <div class=\"sub-btn\"> \n" + 
+//				"   <span style=\"display:none\"><i class=\"iconfont\" icon-report></i> <i>举报</i></span> \n" + 
+//				"   <span class=\"comment-replay\" data-cur=\"child\" data-reply_rid=\"601721\" data-reply_ruid=\"2546194\" data-post_id=\"48411\" data-reply_sub_rid=\"601732\"><i class=\"iconfont\" icon-edit></i> <i>回复</i></span> \n" + 
+//				"  </div> \n" + 
+//				" </div> </li>";
+//		Element li = new Element(a);
+//		System.out.println(li.toString());
+//		Element div_commentText = li.selectFirst(".comment-txt");
+//		if (div_commentText == null) {
+//			System.out.println("空哦那个");
+//		}
+//		Element i_icon = div_commentText.selectFirst("i");
 //	}
 //
 //}

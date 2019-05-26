@@ -221,7 +221,7 @@ public class QuartzConfig {
 		bean.setStartupDelay(1);
 		// 注册触发器
 		LOGGER.info("当前共有{}个trigger", triggers.length);
-//		bean.setTriggers(triggers);
+		bean.setTriggers(triggers);
 		LOGGER.info("调度工厂配置完成,Quartz在应用启动1秒后启动");
 		return bean;
 	}

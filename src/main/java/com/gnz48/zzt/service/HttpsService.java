@@ -508,34 +508,36 @@ public class HttpsService {
 							for (int j = 0; j < lis.size(); j++) {
 								Element li = lis.get(j);
 								Element div_commentText = li.selectFirst(".comment-txt");
-								Element i_icon = div_commentText.selectFirst("i");
-								if (i_icon != null) {// 判断是否为集资评论
-									MoDianComment oldMoDianComment = moDianCommentRepository
-											.findOne(Long.parseLong(li.attr("data-reply-id")));
-									if (oldMoDianComment == null) {// 判断该条评论是否未同步
-										MoDianComment moDianComment = new MoDianComment();
-										moDianComment.setId(Long.parseLong(li.attr("data-reply-id")));// 序列
-										Element div_userInfo = li.selectFirst(".user-info");
-										Element a_user = div_userInfo.selectFirst(".nickname").selectFirst("a[href]");
-										moDianComment.setUid(Long.parseLong(a_user.attr("href")
-												.replace("https://me.modian.com/u/detail?uid=", "")));// 摩点用户ID
-										moDianComment.setUname(a_user.text());// 摩点用户名
-										Element p_time = div_userInfo.selectFirst(".time");
-										moDianComment.setBackerDate(
-												DateUtil.getDateFormat(processPtime(p_time.text()), "yyyy-MM-ddHH:mm"));// 筹集时间
-										String commentText = div_commentText.text();
-										commentText = commentText.replace("支持了", "");
-										commentText = commentText.replace("元", "");
-										moDianComment.setBackerMoney(Double.parseDouble(commentText.trim()));// 已筹金额(元)
-										moDianComment.setProjectId(moDianPoolProject.getId());// 所属集资项目ID
-										moDianComment.setIsSend(1);// 是否发送：默认1未发送
-										// 同步该条评论到数据库
-										moDianCommentRepository.save(moDianComment);
-									} else {
-										break;
-									}
-								} else {
+								if (div_commentText == null) {// 判断是否是1级回复
 									continue;
+								}
+								Element i_icon = div_commentText.selectFirst("i");
+								if (i_icon == null) {// 判断是否为集资评论
+									continue;
+								}
+								MoDianComment oldMoDianComment = moDianCommentRepository
+										.findOne(Long.parseLong(li.attr("data-reply-id")));
+								if (oldMoDianComment == null) {// 判断该条评论是否未同步
+									MoDianComment moDianComment = new MoDianComment();
+									moDianComment.setId(Long.parseLong(li.attr("data-reply-id")));// 序列
+									Element div_userInfo = li.selectFirst(".user-info");
+									Element a_user = div_userInfo.selectFirst(".nickname").selectFirst("a[href]");
+									moDianComment.setUid(Long.parseLong(a_user.attr("href")
+											.replace("https://me.modian.com/u/detail?uid=", "")));// 摩点用户ID
+									moDianComment.setUname(a_user.text());// 摩点用户名
+									Element p_time = div_userInfo.selectFirst(".time");
+									moDianComment.setBackerDate(
+											DateUtil.getDateFormat(processPtime(p_time.text()), "yyyy-MM-ddHH:mm"));// 筹集时间
+									String commentText = div_commentText.text();
+									commentText = commentText.replace("支持了", "");
+									commentText = commentText.replace("元", "");
+									moDianComment.setBackerMoney(Double.parseDouble(commentText.trim()));// 已筹金额(元)
+									moDianComment.setProjectId(moDianPoolProject.getId());// 所属集资项目ID
+									moDianComment.setIsSend(1);// 是否发送：默认1未发送
+									// 同步该条评论到数据库
+									moDianCommentRepository.save(moDianComment);
+								} else {
+									break;
 								}
 							}
 						} else {

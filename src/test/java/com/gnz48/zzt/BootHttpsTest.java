@@ -59,6 +59,14 @@
 //		https2019Service.syncDynamic();
 //	}
 //	
+//	/**
+//	 * 同步摩点项目
+//	 */
+//	@Test
+//	public void sysncModianPoolTest() {
+//		https2019Service.syncModianPool();
+//	}
+//	
 //	@Autowired
 //	private ActivitiService activitiService;
 //	
@@ -66,8 +74,9 @@
 //	 * 同步用户 角色 用户角色到activiti表中
 //	 */
 //	@Test
-//	public void syncdataAcitiviti() {
+//	public void syncdataAcitivitiTest() {
 //		activitiService.syncdata();
 //	}
+//	
 //
 //}
