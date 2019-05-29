@@ -22,7 +22,7 @@ $(document).ready(function () {
             }, {
                 field: "msgObject",
                 title: "消息类型",
-                width: 70,
+                width: 95,
                 formatter: msgObjectHtml
             }, {
                 field: "msgContent",
@@ -43,14 +43,14 @@ $(document).ready(function () {
         method: "GET",
         responseHandler: responseHandler,
         queryParamsType: '',
-        queryParames: queryParames,
+        queryParams: queryParams,
         striped: true,
         pagination: true,
         sidePagination: "server",
         pageNumber: 1,
         pageSize: 15,
-        paginationLoop: false,
-        pageList: "unlimited",
+        paginationLoop: true,
+        pageList: [15, 25, 50, 100],
         cache: false,
         toolbar: "#toolbar",
         toolbarAlign: "left",
@@ -63,15 +63,21 @@ $(document).ready(function () {
         $("#room_message_table").bootstrapTable("refresh");
     });
 
+    /**
+     * 初始化搜索栏
+     */
+    installSelect1();
+
 });
 
 /**
  * 消息类型
  */
 var message_type = {
+    "TEXT": "普通消息", "REPLY": "翻牌", "IMAGE": "图片", "LIVEPUSH": "生放送", "FLIPCARD": "付费翻牌", "EXPRESS": "特殊表情", "VIDEO": "视频",
+    "VOTE": "投票", "AUDIO": "语音",
     "text": "普通消息(旧)", "faipaiText": "翻牌(旧)", "image": "图片(旧)", "live": "直播(旧)", "diantai": "电台(旧)", "idolFlip": "付费翻牌(旧)",
-    "audio": "语音(旧)", "videoRecord": "视频(旧)", "TEXT": "普通消息", "REPLY": "翻牌", "IMAGE": "图片", "LIVEPUSH": "生放送", "FLIPCARD": "付费翻牌",
-    "EXPRESS": "特殊表情", "VIDEO": "视频"
+    "audio": "语音(旧)", "videoRecord": "视频(旧)"
 }
 
 /**
@@ -94,8 +100,6 @@ var msgObjectHtml = function (value, row, index) {
 var msgContentHtml = function (value, row, index) {
     var msgObject = row.messageObject;
     var msgContent = row.msgContent;
-    console.log(row);
-    console.log(msgObject);
 
     if (msgObject == "IMAGE" || msgObject == "image") {
         msgContent = msgContent.replace("<img>", "");
@@ -106,12 +110,30 @@ var msgContentHtml = function (value, row, index) {
         var temp = null;
         if (msgContent.indexOf("<img>") != -1) {
             temp = msgContent.split("<img>");
-            temp = temp[0] + "<br>" + "<img src=\"" + temp[1] + "\" width=\"200\"/>"
+            temp = temp[0] + "<br>" + "<img src=\"" + temp[1] + "\" width=\"20%\"/>"
         } else if (msgContent.indexOf("[图片]" != -1)) {
             temp = msgContent.split("[图片]");
-            temp = temp[0] + "<img src=\"" + temp[1] + "\" width=\"200\"/>"
+            temp = temp[0] + "<img src=\"" + temp[1] + "\" width=\"20%\"/>"
         }
         return temp;
+
+    } else if (msgObject == "VIDEO" || msgObject == "AUDIO") {
+        var temp = null;
+        if (msgContent.indexOf("[视频]<br>点击➡️") != -1) {
+            temp = msgContent.replace("[视频]<br>点击➡️", "");
+            return "<video width=\"320\" height=\"240\" controls>" +
+                "<source src=\"" + temp + "\"  type=\"video/mp4\">" +
+                "<source src=\"" + temp + "\"  type=\"video/ogg\">" +
+                "您的浏览器不支持 HTML5 video 标签。" +
+                "</video>";
+        } else if (msgContent.indexOf("[语音]<br>点击➡️") != -1) {
+            temp = msgContent.replace("[语音]<br>点击➡️", "");
+            return "<audio controls>" +
+                "<source src=\"" + temp + "\" type=\"audio/mpeg\">" +
+                "<source src=\"" + temp + "\" type=\"audio/ogg\">" +
+                "您的浏览器不支持 audio 元素。" +
+                "</audio>";
+        }
 
     } else {
         return msgContent;
@@ -150,8 +172,20 @@ var responseHandler = function (res) {
  * 表格请求参数
  * @param {*} params 
  */
-var queryParames = function (params) {
-    var searchText = $("#exampleInput1").val();
+var queryParams = function (params) {
+    var searchText = $("#input1").val();
+    var msgObject = $("#select1").val();
     params["searchText"] = searchText;
+    params["msgObject"] = msgObject;
     return params;
+}
+
+/**
+ * 初始化#select1下拉框
+ */
+function installSelect1() {
+    for (var t in message_type) {
+        $("#select1").append("<option value='" + t + "'>" + message_type[t]
+            + "</option>");
+    }
 }

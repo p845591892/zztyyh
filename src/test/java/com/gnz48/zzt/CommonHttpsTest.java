@@ -7,6 +7,7 @@
 //import java.net.MalformedURLException;
 //import java.net.URL;
 //import java.net.URLClassLoader;
+//import java.text.ParseException;
 //import java.util.HashMap;
 //import java.util.Map;
 //
@@ -18,6 +19,7 @@
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //
+//import com.gnz48.zzt.util.DateUtil;
 //import com.gnz48.zzt.util.Https;
 //import com.gnz48.zzt.util.StringUtil;
 //
@@ -30,6 +32,10 @@
 //public class CommonHttpsTest {
 //
 //	private static final Logger log = LoggerFactory.getLogger(CommonHttpsTest.class);
+//	private static final String HEADER_ACCEPT = "*/*";
+//	private static final String HEADER_CONTENT_TYPE = "application/json;charset=UTF-8";
+//	private static final String HEADER_USER_AGENT = "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)";
+//	private static final String HEADER_APPINFO = "{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}";
 //
 //	/**
 //	 * 获取成员房间资料
@@ -88,7 +94,7 @@
 //		requestPropertys.put("appInfo",
 //				"{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}");
 ////		String payloadJson = "{\"mobile\":\"18824171764\",\"pwd\":\"woshi182tidu\"}";
-//		String payloadJson = "{\"mobile\": \"18824171764\",\"pwd\": \"woshi182tidu\"}";
+//		String payloadJson = "{\"mobile\": \"15877240295\",\"pwd\": \"woshi182tidu\"}";
 //
 //		String login = https.setUrl("https://pocketapi.48.cn/user/api/v1/login/app/mobile").setDataType("POST")
 //				.setPayloadJson(payloadJson).setRequestProperty(requestPropertys).send();
@@ -97,28 +103,29 @@
 //	}
 //
 //	/**
-//	 * 获取房间资料
+//	 * 获取房间消息
 //	 */
 //	@Test
 //	public void getRoomMessageTest() {
 //		Https https = new Https();
 //		/* 请求头 */
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
-//		requestPropertys.put("Accept", "application/json, text/plain, */*");
-//		requestPropertys.put("Content-Type", "application/json;charset=UTF-8");
-//		requestPropertys.put("User-Agent",
-//				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
+//		requestPropertys.put("Accept", HEADER_ACCEPT);
+//		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
+//		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
 //		requestPropertys.put("token",
-//				"iF+q/8I0c4dNbTLMVZTy3l+bmVg7su9D93ckXlfaXK7zDWeuKsLvlNKTRx256T3+XGTZSia9gQddWomx0GJEZg==");
+//				"PfCR4TzfYr0I7+usUFwEgEnTQRii1xAI3Y72gAwyK1VoXugczM/4aSBOtOrJK/NdOdwl7bnLE5M=");
 //		/* 请求参数 */
-//		String payloadJson = "{\"ownerId\":\"1\",\"needTop1Msg\":\"false\",\"nextTime\":\"0\",\"roomId\":\"67313770\"}";
+//		String payloadJson = "{\"ownerId\":\"327567\",\"needTop1Msg\":\"false\",\"nextTime\":\"1558885156942\",\"roomId\":\"67342026\"}";
 //		/* 发送请求 */
 //		String messageJson = https.setDataType("POST").setRequestProperty(requestPropertys).setPayloadJson(payloadJson)
 //				.setUrl("https://pocketapi.48.cn/im/api/v1/chatroom/msg/list/homeowner").send();
-//		System.out.println(messageJson);
 //		JSONObject messageObject = new JSONObject(messageJson);
 //		JSONArray messageArray = messageObject.getJSONObject("content").getJSONArray("message");
 //		System.out.println(messageArray.length());
+//		for (int i = 0; i < messageArray.length(); i++) {
+//			System.out.println(messageArray.get(i).toString());
+//		}
 //	}
 //
 //	/**
@@ -155,11 +162,11 @@
 //
 //	@Test
 //	public void stringTest() {
-//		System.out.println(StringUtil.isEnglish(""));
-//		System.out.println(StringUtil.isEnglish(" "));
-//		System.out.println(StringUtil.isEnglish("你好"));
-//		System.out.println(StringUtil.isEnglish("ABC"));
-//		System.out.println(StringUtil.isEnglish("abc你好"));
+//		try {
+//			System.out.println(DateUtil.getDate(DateUtil.getDateFormat(1558766916168l)));
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
 //	}
 //	
 //	@Test

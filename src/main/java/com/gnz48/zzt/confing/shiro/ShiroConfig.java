@@ -75,7 +75,7 @@ public class ShiroConfig {
 		log.info("===============>> shiro-设置安全管理器");
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setRealm(myShiroRealm());
-		securityManager.setCacheManager(ehCacheManager());
+//		securityManager.setCacheManager(ehCacheManager());
 //		securityManager.setSessionManager(defaultWebSessionManager());
 		return securityManager;
 	}
@@ -116,7 +116,7 @@ public class ShiroConfig {
 		/**
 		 * L主页
 		 */
-		filterChainDefinitionMap.put("/index", "authc");// 首页跳转url
+		filterChainDefinitionMap.put("/index", "anon");// 首页跳转url
 		/**
 		 * L系统配置
 		 */
@@ -153,7 +153,7 @@ public class ShiroConfig {
 		/*
 		 * L--L成员列表
 		 */
-		filterChainDefinitionMap.put("/resource-management/member-table", "perms[member-table:url]");// 成员列表跳转url
+		filterChainDefinitionMap.put("/resource-management/member-table", "anon");// 成员列表跳转url
 		filterChainDefinitionMap.put("/member/refresh", "perms[member:refresh]");// 同步到最新的成员房间信息接口
 		filterChainDefinitionMap.put("/member/update/room-monitor", "perms[member:update]");// 修改成员房间监控状态接口
 		filterChainDefinitionMap.put("/room-monitor/add", "perms[room-monitor:add]");// 新增成员房间监控配置接口
@@ -162,7 +162,7 @@ public class ShiroConfig {
 		/*
 		 * L--L摩点项目列表
 		 */
-		filterChainDefinitionMap.put("/resource-management/modian-table", "perms[modian-table:url]");// 摩点项目列表跳转url
+		filterChainDefinitionMap.put("/resource-management/modian-table", "anon");// 摩点项目列表跳转url
 		filterChainDefinitionMap.put("/modian/add", "perms[modian:add]");// 新增摩点项目接口
 		filterChainDefinitionMap.put("/modian/delete", "perms[modian:delete]");// 删除摩点项目接口
 		filterChainDefinitionMap.put("/modian-monitor/add", "perms[modian-monitor:add]");// 新增摩点项目监控接口
@@ -170,7 +170,7 @@ public class ShiroConfig {
 		/*
 		 * L--L微博用户列表
 		 */
-		filterChainDefinitionMap.put("/resource-management/weibo-table", "perms[weibo-table:url]");// 微博用户列表跳转url
+		filterChainDefinitionMap.put("/resource-management/weibo-table", "anon");// 微博用户列表跳转url
 		filterChainDefinitionMap.put("/weibo/add", "perms[weibo:add]");// 新增监控的微博用户接口
 		filterChainDefinitionMap.put("/weibo/delete", "perms[weibo:delete]");// 删除监控的微博用户接口
 		filterChainDefinitionMap.put("/dynamic-monitor/add", "perms[dynamic-monitor:add]");// 新增微博动态监控接口
@@ -197,7 +197,7 @@ public class ShiroConfig {
 		/*
 		 * L--L口袋房间消息数据
 		 */
-		filterChainDefinitionMap.put("/data-visualization/room-message", "perms[message-visual:url]");// 可视化口袋消息数据跳转url
+		filterChainDefinitionMap.put("/data-visualization/room-message", "anon");// 可视化口袋消息数据跳转url
 
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;

@@ -96,12 +96,9 @@
                             <i class="fa fa-cogs"></i> <span>机器人配置</span>
                         </a>
                         <ul class="sub">
-                            <li class="active" shiro:hasPermission="member-table:url"><a
-                                    href="/resource-management/member-table">成员列表</a></li>
-                            <li shiro:hasPermission="modian-table:url"><a
-                                    href="/resource-management/modian-table">摩点项目列表</a></li>
-                            <li shiro:hasPermission="weibo-table:url"><a
-                                    href="/resource-management/weibo-table">微博用户列表</a></li>
+                            <li class="active"><a href="/resource-management/member-table">成员列表</a></li>
+                            <li><a href="/resource-management/modian-table">摩点项目列表</a></li>
+                            <li><a href="/resource-management/weibo-table">微博用户列表</a></li>
                             <li shiro:hasPermission="qq-table:url"><a href="/resource-management/qq-table">QQ列表</a></li>
                             <li shiro:hasPermission="quartz-confing-table:url"><a
                                     href="/resource-management/quartz-confing-table">轮询配置列表</a></li>
@@ -112,7 +109,7 @@
                         <ul class="sub">
                             <li shiro:hasPermission="modian-visual:url"><a
                                     href="/data-visualization/modian-visual">摩点项目数据</a></li>
-                            <li shiro:hasPermission="message-visual:url">
+                            <li>
                                 <a href="/data-visualization/room-message">口袋房间消息</a>
                             </li>
                         </ul>
@@ -161,11 +158,11 @@
     <div id="toolbar" class="btn-group">
         <form class="form-inline">
             <div class="form-group">
-                <input id="exampleInput1" class="form-control round-form" name="searchText" placeholder="汉字或拼音缩写"/>
+                <input id="input1" class="form-control round-form" name="searchText" placeholder="名字或拼音缩写" />
             </div>
             <div class="form-group">
-                <label class="control-label" for="exampleSelect1">团体：</label>
-                <select class="form-control" name="groupName" id="exampleSelect1">
+                <label class="control-label" for="select1">团体：</label>
+                <select class="form-control" name="groupName" id="select1">
                     <option value="ALL">ALL</option>
                     <option value="SNH48">SNH48</option>
                     <option value="GNZ48">GNZ48</option>
@@ -177,14 +174,14 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="control-label" for="exampleSelect2">队伍：</label>
-                <select class="form-control" name="teamName" id="exampleSelect2">
+                <label class="control-label" for="select2">队伍：</label>
+                <select class="form-control" name="teamName" id="select2">
                     <option value="ALL">ALL</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="control-label" for="exampleSelect3">房间监控状态：</label>
-                <select class="form-control" name="roomMonitor" id="exampleSelect3">
+                <label class="control-label" for="select3">房间监控状态：</label>
+                <select class="form-control" name="roomMonitor" id="select3">
                     <option value="ALL">ALL</option>
                     <option value="1">开启</option>
                     <option value="2">未开启</option>

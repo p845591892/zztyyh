@@ -108,7 +108,7 @@ $(document)
                         pageNumber: 1,
                         pageSize: 15,
                         paginationLoop: false,
-                        pageList: "unlimited",
+                        pageList: [15, 25, 50],
                         cache: false,
                         showColumns: true,
                         showRefresh: true,
@@ -120,8 +120,8 @@ $(document)
                     });
 
             /* 更改团体后的操作 */
-            $("#exampleSelect1").change(function () {
-                var group = $("#exampleSelect1").val();
+            $("#select1").change(function () {
+                var group = $("#select1").val();
                 getTeam(group);
             });
 
@@ -149,10 +149,10 @@ var select_team = {
  * @param {*} params 
  */
 var queryParams = function (params) {
-    params["groupName"] = $("#exampleSelect1").val();
-    params["teamName"] = $("#exampleSelect2").val();
-    params["roomMonitor"] = $("#exampleSelect3").val();
-    params["searchText"] = $("#exampleInput1").val();
+    params["groupName"] = $("#select1").val();
+    params["teamName"] = $("#select2").val();
+    params["roomMonitor"] = $("#select3").val();
+    params["searchText"] = $("#input1").val();
     return params;
 }
 
@@ -469,11 +469,11 @@ function refreshVideoShow() {
  * @param {*} group 
  */
 function getTeam(group) {
-    $("#exampleSelect2").empty();
+    $("#select2").empty();
     var teams = select_team[group];
     for (let i = 0; i < teams.length; i++) {
         const team = teams[i];
-        $("#exampleSelect2").append("<option value='" + team + "'>" + team
+        $("#select2").append("<option value='" + team + "'>" + team
             + "</option>");
     }
 }

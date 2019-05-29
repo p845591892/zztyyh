@@ -65,7 +65,7 @@ $(document).ready(function() {
 		pageNumber : 1,
 		pageSize : 15,
 		paginationLoop : false,
-		pageList : "unlimited",
+		pageList : [15, 25, 50],
 		cache : false,
 		search : true,
 		searchAlign : "right",

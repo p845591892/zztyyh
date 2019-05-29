@@ -54,6 +54,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 */
 	private String TOKEN = "";
 	
+	/**
+	 * 请求头
+	 */
 	private static final String HEADER_ACCEPT = "*/*";
 	private static final String HEADER_CONTENT_TYPE = "application/json;charset=UTF-8";
 	private static final String HEADER_USER_AGENT = "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)";
@@ -410,11 +413,11 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			
 		} else if (messageType.equals("REPLY")) {// 回复类型
 			msgContent.append("[回复]<br>");
+			msgContent.append(indexObject.getString("bodys"));
+			msgContent.append("<br>_____________________________<br>");
 			msgContent.append(extInfoObject.getString("replyName"));
 			msgContent.append(" : ");
 			msgContent.append(extInfoObject.getString("replyText"));
-			msgContent.append("<br>_____________________________<br>");
-			msgContent.append(indexObject.getString("bodys"));
 			
 		} else if (messageType.equals("IMAGE")) {// 图片类型
 			msgContent.append("<img>");
@@ -422,7 +425,7 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			msgContent.append(bodysObject.getString("url"));
 			
 		} else if (messageType.equals("LIVEPUSH")) {// 生放送类型
-			msgContent.append("[口袋生放送]<br>");
+			msgContent.append("[生放送]<br>");
 			msgContent.append(extInfoObject.getString("liveTitle"));
 			msgContent.append("<br>");
 			msgContent.append(URL_LIVE);
@@ -434,20 +437,30 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			msgContent.append("[");
 			msgContent.append(indexObject.getString("bodys"));
 			msgContent.append("]<br>");
+			msgContent.append(extInfoObject.getString("answer"));
+			msgContent.append("<br>______________________________<br>");
 			msgContent.append(this.getNickname(extInfoObject.getString("answerId")));
 			msgContent.append(" : ");
 			msgContent.append(extInfoObject.getString("question"));
-			msgContent.append("<br>______________________________<br>");
-			msgContent.append(extInfoObject.getString("answer"));
 			
 		} else if (messageType.equals("EXPRESS")) {// 特殊表情类型
 			msgContent.append("发送了一个特殊表情[");
 			msgContent.append(extInfoObject.getString("emotionName"));
-			msgContent.append("]，请到App查看。");
+			msgContent.append("]，请到口袋48App查看。");
 			
 		} else if (messageType.equals("VIDEO")) {// 视频类型
 			JSONObject bodysObject = new JSONObject(indexObject.getString("bodys"));
 			msgContent.append("[视频]<br>点击➡️");
+			msgContent.append(bodysObject.getString("url"));
+			
+		} else if (messageType.equals("VOTE")) {// 投票类型
+			msgContent.append("[投票]<br>");
+			msgContent.append(extInfoObject.getString("text"));
+			msgContent.append("<br>详情请到口袋48App查看。");
+			
+		} else if (messageType.equals("AUDIO")) {// 语音类型
+			JSONObject bodysObject = new JSONObject(indexObject.getString("bodys"));
+			msgContent.append("[语音]<br>点击➡️");
 			msgContent.append(bodysObject.getString("url"));
 			
 		} else {

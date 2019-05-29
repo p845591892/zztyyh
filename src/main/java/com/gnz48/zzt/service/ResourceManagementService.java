@@ -333,7 +333,7 @@ public class ResourceManagementService {
 	 * @return Page<Member> 返回Page的成员列表
 	 */
 	public Page<Member> getMembers(Integer pageNumber, Integer pageSize, MemberVO vo) {
-		// 条件对象
+		// 查询条件
 		Specification<Member> specification = new Specification<Member>() {
 
 			@Override
@@ -372,7 +372,7 @@ public class ResourceManagementService {
 				return cb.and(predicates.toArray(new Predicate[0]));
 			}
 		};
-		// 分页对象
+		// 分页
 		Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
 
 		Page<Member> members = null;
@@ -393,35 +393,45 @@ public class ResourceManagementService {
 	 * @return Page<RoomMessage> 返回Page的房间消息列表
 	 */
 	public Page<RoomMessage> getRoomMessages(Integer pageNumber, Integer pageSize, RoomMessageVO vo) {
-		// 条件对象
+		// 查询条件
 		Specification<RoomMessage> specification = new Specification<RoomMessage>() {
 
 			@Override
 			public Predicate toPredicate(Root<RoomMessage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				String senderName = vo.getSenderName();
-				String msgContent = vo.getMsgContent();
+				String msgObject = vo.getMsgObject();
 
-				List<Predicate> predicates = new ArrayList<Predicate>();
-
-				if (!StringUtil.isEmpty(senderName)) {// 模糊匹配发送人姓名
-					Predicate predicate = cb.like(root.get("senderName").as(String.class), "%" + senderName.trim() + "%");
-					predicates.add(predicate);
+				List<Predicate> eqPredicates = new ArrayList<Predicate>();
+				
+				if (!StringUtil.isEmpty(msgObject) && !msgObject.equals("ALL")) {
+					Predicate predicate = cb.equal(root.get("messageObject").as(String.class), msgObject.trim());
+					eqPredicates.add(predicate);
 				}
-				if (!StringUtil.isEmpty(msgContent)) {// 模糊匹配消息内容
-					Predicate predicate = cb.like(root.get("msgContent").as(String.class), "%" + msgContent.trim() + "%");
-					predicates.add(predicate);
+				
+				if (StringUtil.isEmpty(vo.getSearchText())) {
+					return cb.and(eqPredicates.toArray(new Predicate[0]));
 				}
-				return cb.or(predicates.toArray(new Predicate[0]));
+				
+				String searchText = vo.getSearchText().trim();
+				
+				List<Predicate> orPredicates = new ArrayList<Predicate>();
+				
+				Predicate predicate1 = cb.like(root.get("senderName").as(String.class), "%" + searchText.trim() + "%");
+				Predicate predicate2 = cb.like(root.get("msgContent").as(String.class), "%" + searchText.trim() + "%");
+				orPredicates.add(predicate1);
+				orPredicates.add(predicate2);
+					
+				return query.where(cb.and(eqPredicates.toArray(new Predicate[0])),
+													cb.or(orPredicates.toArray(new Predicate[0]))
+												).getRestriction();
 			}
 		};
-		// 排序对象
+		// 分页排序
 		Sort sort = new Sort(Direction.DESC, "msgTime");
-		// 分页对象
 		Pageable pageable = new PageRequest(pageNumber - 1, pageSize, sort);
 		
 		Page<RoomMessage> roomMessages = null;
 		try {
-			roomMessages = roomMessageRepository.findAll(pageable);
+			roomMessages = roomMessageRepository.findAll(specification, pageable);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

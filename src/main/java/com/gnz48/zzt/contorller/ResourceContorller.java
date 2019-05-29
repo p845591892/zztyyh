@@ -331,11 +331,6 @@ public class ResourceContorller {
 	@GetMapping("/room-message")
 	public ResultVO getRoomMessage(@RequestParam(defaultValue = "1") Integer pageNumber,
 			@RequestParam(defaultValue = "15") Integer pageSize, RoomMessageVO vo) {
-		if (!StringUtil.isEmpty(vo.getSearchText())) {
-			vo.setSenderName(vo.getSearchText());
-			vo.setMsgContent(vo.getSearchText());
-		}
-		
 		ResultVO result = new ResultVO();
 		result.setStatus(200);
 		result.setCause("success");
