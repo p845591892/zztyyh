@@ -1,5 +1,8 @@
 package com.gnz48.zzt.service;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -120,8 +123,20 @@ public class HttpsService {
 		Map<String, String> requestPropertys = new HashMap<String, String>();// 设置请求头
 		requestPropertys.put("Content-Type", "application/json; charset=UTF-8");
 		String payloadJson = "{account: \"" + username + "\", password: \"" + password + "\"}";// 设置用输出流写出的json参数
-		String result = https.setUrl("https://puser.48.cn/usersystem/api/user/v1/web/login/phone")
-				.setRequestProperty(requestPropertys).setPayloadJson(payloadJson).setDataType("POST").send();
+		String result = null;
+		try {
+			result = https.setUrl("https://puser.48.cn/usersystem/api/user/v1/web/login/phone")
+					.setRequestProperty(requestPropertys).setPayloadJson(payloadJson).setDataType("POST").send();
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		JSONObject jsonObject = new JSONObject(result);
 		String message = jsonObject.getString("message");
 		if (message.equals("success")) {
@@ -202,7 +217,19 @@ public class HttpsService {
 	public void syncMember() {
 		Https https = new Https();
 		/* 获取成员信息 */
-		String result = https.setDataType("GET").setUrl("https://h5.48.cn/memberPage/member_mapping.json").send();
+		String result = null;
+		try {
+			result = https.setDataType("GET").setUrl("https://h5.48.cn/memberPage/member_mapping.json").send();
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		JSONObject jsonObject = new JSONObject(result);
 		Iterator<String> iterator = jsonObject.keys();
 		while (iterator.hasNext()) {// 遍历全体成员信息对象
@@ -223,9 +250,20 @@ public class HttpsService {
 			requestPropertys.put("User-Agent",
 					"Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1");
 			String payloadJson = "{memberId: \"" + memberObject.getLong("memberId") + "\"}";// 设置json参数
-			result = https.setDataType("POST")
-					.setUrl("https://pjuju.48.cn/imsystem/api/im/v1/member/room/info/memberId")
-					.setRequestProperty(requestPropertys).setPayloadJson(payloadJson).send();
+			try {
+				result = https.setDataType("POST")
+						.setUrl("https://pjuju.48.cn/imsystem/api/im/v1/member/room/info/memberId")
+						.setRequestProperty(requestPropertys).setPayloadJson(payloadJson).send();
+			} catch (KeyManagementException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			JSONObject jsonObject2 = new JSONObject(result);
 			String message = jsonObject2.getString("message");
 			if (message.equals("success")) {// 排除房间不存在的成员
@@ -257,8 +295,11 @@ public class HttpsService {
 	 *               根据mblog中的id字段判断该条动态是否同步过，如果查询数据库中存在则说明未有新动态，立即停止遍历。反之就将该条动态解析
 	 *               后存入数据库，并继续遍历下一条数据。
 	 * @author JuFF_白羽
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public void syncDynamic() {
+	public void syncDynamic() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		List<WeiboUser> users = userRepository.findAll();
 		for (WeiboUser user : users) {
 			String url = "https://m.weibo.cn/api/container/getIndex?containerid=" + user.getContainerDynamicId();
@@ -269,6 +310,7 @@ public class HttpsService {
 					"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15");
 			requestPropertys.put("X-Requested-With", "XMLHttpRequest");
 			String result = https.setDataType("GET").setUrl(url).setRequestProperty(requestPropertys).send();
+			
 			JSONObject json = new JSONObject(result);
 			JSONObject data = json.getJSONObject("data");
 //			if (data.has("cards")) {
@@ -378,9 +420,21 @@ public class HttpsService {
 					requestPropertys.put("token", token);
 					String payloadJson = "{roomId: " + member.getRoomId().toString()
 							+ ", lastTime: \"0\", limit: 20, chatType: 1}";// 设置用输出流写出的json参数
-					String result = https.setUrl("https://pjuju.48.cn/imsystem/api/im/v1/member/room/message/mainpage")
-							.setRequestProperty(requestPropertys).setPayloadJson(payloadJson).setDataType("POST")
-							.send();
+					String result = null;
+					try {
+						result = https.setUrl("https://pjuju.48.cn/imsystem/api/im/v1/member/room/message/mainpage")
+								.setRequestProperty(requestPropertys).setPayloadJson(payloadJson).setDataType("POST")
+								.send();
+					} catch (KeyManagementException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchAlgorithmException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					JSONObject jsonObject = new JSONObject(result);
 					String message = jsonObject.getString("message");
 					if (message.equals("success")) {
@@ -447,8 +501,20 @@ public class HttpsService {
 				poolRequestPropertys.put("User-Agent",
 						"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36");
 				poolRequestPropertys.put("X-Requested-With", "XMLHttpRequest");
-				String poolResult = https.setDataType("GET").setRequestProperty(poolRequestPropertys).setUrl(poolUrl)
-						.send();
+				String poolResult = null;
+				try {
+					poolResult = https.setDataType("GET").setRequestProperty(poolRequestPropertys).setUrl(poolUrl)
+							.send();
+				} catch (KeyManagementException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// 解析摩点项目JSON结果
 				int beginIndex = poolResult.indexOf("{");
 				int endIndex = poolResult.lastIndexOf("}") + 1;
@@ -491,9 +557,21 @@ public class HttpsService {
 						commentParams.put("post_id", postId);
 						commentParams.put("page", String.valueOf(i));
 						commentParams.put("page_size", String.valueOf(size));
-						String commentResult = https.setDataType("GET").setRequestProperty(commentRequestPropertys)
-								.setParams(commentParams).setUrl("https://zhongchou.modian.com/comment/ajax_comments")
-								.send();
+						String commentResult = null;
+						try {
+							commentResult = https.setDataType("GET").setRequestProperty(commentRequestPropertys)
+									.setParams(commentParams).setUrl("https://zhongchou.modian.com/comment/ajax_comments")
+									.send();
+						} catch (KeyManagementException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAlgorithmException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						int beginIndex2 = commentResult.indexOf("{");
 						int endIndex2 = commentResult.lastIndexOf("}") + 1;
 						commentResult = commentResult.substring(beginIndex2, endIndex2);
@@ -595,8 +673,20 @@ public class HttpsService {
 		Map<String, String> requestPropertys = new HashMap<String, String>();
 		requestPropertys.put("Content-Type", "application/json; charset=UTF-8");
 		String payloadJson = "{needChatInfo: false, needFriendsNum: false, needRecommend: false}";
-		String result = https.setUrl("https://puser.48.cn/usersystem/api/user/v1/show/info/" + userId)
-				.setDataType("POST").setRequestProperty(requestPropertys).setPayloadJson(payloadJson).send();
+		String result = null;
+		try {
+			result = https.setUrl("https://puser.48.cn/usersystem/api/user/v1/show/info/" + userId)
+					.setDataType("POST").setRequestProperty(requestPropertys).setPayloadJson(payloadJson).send();
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		JSONObject jsonObject = new JSONObject(result);
 		if (jsonObject.getString("message").equals("success")) {
 			JSONObject userInfo = jsonObject.getJSONObject("content").getJSONObject("userInfo");
@@ -625,8 +715,11 @@ public class HttpsService {
 	 * @param containerUserId
 	 *            容器ID(用户)
 	 * @return WeiboUser 微博用户
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	public WeiboUser getWeiboUser(Long containerUserId) {
+	public WeiboUser getWeiboUser(Long containerUserId) throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		Https https = new Https();
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("containerid", String.valueOf(containerUserId));
@@ -679,9 +772,6 @@ public class HttpsService {
 				weiboUser.setFollowCount(userInfo.getInt("follow_count"));
 				weiboUser.setFollowersCount(userInfo.getInt("followers_count"));
 				weiboUser.setId(userInfo.getLong("id"));
-				weiboUser.setUserName(userInfo.getString("screen_name"));
-				
-				return weiboUser;
 //			}
 
 		}
@@ -695,8 +785,16 @@ public class HttpsService {
 	public void syncWeiboUser() {
 		List<WeiboUser> weiboUsers = weiboUserRepository.findAll();
 		for (WeiboUser weiboUser : weiboUsers) {
-			WeiboUser newWeiboUser = getWeiboUser(weiboUser.getContainerUserId());
-			weiboUserRepository.save(newWeiboUser);
+			WeiboUser newWeiboUser = null;
+			try {
+				newWeiboUser = getWeiboUser(weiboUser.getContainerUserId());
+			} catch (Exception e) {
+				log.info("同步微博【{}】错误：{}", weiboUser.getUserName(), e.getMessage());
+				e.printStackTrace();
+			}
+			if (newWeiboUser != null) {
+				weiboUserRepository.save(newWeiboUser);
+			}
 		}
 	}
 

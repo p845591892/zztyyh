@@ -60,6 +60,7 @@ $(document).ready(function () {
 
     /* 查询 */
     $("#btn_select").on("click", function () {
+        $("#room_message_table").bootstrapTable("refreshOptions", {pageNumber : 1});
         $("#room_message_table").bootstrapTable("refresh");
     });
 

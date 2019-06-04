@@ -20,20 +20,14 @@ spring:
     filters: stat,log4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     driverClassName: com.mysql.jdbc.Driver
-#Mac
-#    url: jdbc:mysql://localhost:3306/zztyyh?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
-#    username: root
-#    password: '0112'
 #服务器(本机)
-    url: jdbc:mysql://172.16.0.6:3306/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
-    username: zztyyh
-    password: zztyyh1029
+    url: jdbc:mysql://${ip}:${port}/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
+    username: ${username}
+    password: ${password(密文com.gnz48.zzt.util.EncrypAES)}
   jpa:
     database: mysql
     hibernate.ddl-auto: none
     show-sql: false
-#    hibernate.ddl-auto: update
-#    show-sql: true
   thymeleaf:
     #指定资源位置
     prefix: classpath:/templates/
@@ -59,9 +53,10 @@ spring:
       max-request-size: 15MB
   #工作流配置
   activiti:
-    database-schema-update: drop-create
+    database-schema-update: true
     history-level: full
     check-process-definitions: false
+    db-history-used: true
 
 #上传文件的外部静态根目录
 web:

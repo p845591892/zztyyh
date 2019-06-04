@@ -1,5 +1,8 @@
 package com.gnz48.zzt.service.impl;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,10 +60,10 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	/**
 	 * 请求头
 	 */
-	private static final String HEADER_ACCEPT = "*/*";
-	private static final String HEADER_CONTENT_TYPE = "application/json;charset=UTF-8";
-	private static final String HEADER_USER_AGENT = "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)";
-	private static final String HEADER_APPINFO = "{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}";
+	private static final String APP_HEADER_ACCEPT = "*/*";
+	private static final String APP_HEADER_CONTENT_TYPE = "application/json;charset=UTF-8";
+	private static final String APP_HEADER_USER_AGENT = "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)";
+	private static final String APP_HEADER_APPINFO = "{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}";
 	
 	/**
 	 * SNH48Group所有成员列表接口
@@ -97,27 +100,24 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 */
 	private static final String URL_USER = "https://pocketapi.48.cn/user/api/v1/user/info/home";
 	
-	/**
-	 * 2019年版Https服务的Dao组件
-	 */
 	@Autowired
 	private Https2019Dao https2019Dao;
-	
-	/**
-	 * 成员表DAO组件
-	 */
 	@Autowired
 	private MemberRepository memberRepository;
-	
-	/**
-	 * 口袋房间消息表DAO组件
-	 */
 	@Autowired
 	private RoomMessageRepository roomMessageRepository;
 	
 	@Override
 	public void syncMember() {
-		JSONObject jsonObject = this.getAllMember();
+		log.info("同步成员资料...");
+		JSONObject jsonObject  = null;
+		try {
+			jsonObject = this.getAllMember();
+		} catch (Exception e) {
+			log.info("【URL_ALL_MEMBER_LIST】接口调用发生错误：{}", e.getMessage());
+			return;
+		}
+		
 		/* 遍历全体成员信息对象 */
 		Iterator<String> iterator = jsonObject.keys();
 		while (iterator.hasNext()) {
@@ -126,8 +126,12 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			String key = iterator.next();
 			JSONObject memberObject = jsonObject.getJSONObject(key);
 			long memberId = memberObject.getLong("memberId");
-			memberObject = this.getMember(memberId);
-			// 若取不到，则结束该成员资料的同步
+			try {
+				memberObject = this.getMember(memberId);
+			} catch (Exception e) {
+				log.info("【URL_MEMBER】接口调用发生错误：{}。memberId = {}", e.getMessage(), memberId);
+				continue;
+			}
 			if (memberObject == null) {
 				continue;
 			}
@@ -162,8 +166,13 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			member.setNickname(starInfo.getString("nickname"));// 昵称
 			
 			/* 获取成员房间资料 */
-			JSONObject roomObject = this.getMemberRoom(memberId, 0, 5);
-			// 若取不到，则结束该成员资料的同步
+			JSONObject roomObject = null;
+			try {
+				roomObject = this.getMemberRoom(memberId, 0, 5);
+			} catch (Exception e) {
+				log.info("【URL_MEMBER_ROOM】接口调用发生错误：{}。memberId = {}", e.getMessage(), memberId);
+				continue;
+			}
 			if (roomObject == null) {
 				continue;
 			}
@@ -194,13 +203,17 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			}
 			
 		}
+		log.info("同步成员资料结束");
 	}
 	
 	/**
 	 * 发送请求获取SNH48Group所有成员的列表
 	 * @return 全体成员资料的json对象
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	private JSONObject getAllMember() {
+	private JSONObject getAllMember() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		Https https = new Https();
 		String allMember = https.setDataType("GET").setUrl(URL_ALL_MEMBER_LIST).send();
 		JSONObject allMemberObject = new JSONObject(allMember);
@@ -211,14 +224,17 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 * 发送请求获取SNH48Group成员的个人资料
 	 * @param memberId 成员ID
 	 * @return 成员个人资料的json对象
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	private JSONObject getMember(long memberId) {
+	private JSONObject getMember(long memberId) throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", HEADER_ACCEPT);
-		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
-		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
+		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
 		/* 请求参数 */
 		String payloadJson = "{\"memberId\":\"" + String.valueOf(memberId) + "\"}";
 		/* 发送请求 */
@@ -242,8 +258,11 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 * @param type 请求类型(默认填0，暂不推荐其他参数。)
 	 * @param again 再次尝试发送请求次数
 	 * @return 房间资料的json对象
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	private JSONObject getMemberRoom(long sourceId, int type, int again) {
+	private JSONObject getMemberRoom(long sourceId, int type, int again) throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		if (again == 0) {
 			log.info("已超过规定尝试次数，强制结束请求返回null");
 			return null;
@@ -252,10 +271,10 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", HEADER_ACCEPT);
-		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
-		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
-		requestPropertys.put("appInfo", HEADER_APPINFO);
+		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+		requestPropertys.put("appInfo", APP_HEADER_APPINFO);
 		requestPropertys.put("token", TOKEN);
 		/* 请求参数 */
 		String payloadJson = "{\"sourceId\":\"" + String.valueOf(sourceId) + "\",\"type\":\"" + String.valueOf(type) + "\"}";
@@ -278,15 +297,18 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	/**
 	 * 发送请求获取token
 	 * @return token字符串
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	private String getToken() {
+	private String getToken() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", HEADER_ACCEPT);
-		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
-		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
-		requestPropertys.put("appInfo", HEADER_APPINFO);
+		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+		requestPropertys.put("appInfo", APP_HEADER_APPINFO);
 		/* 请求参数 */
 		String payloadJson = "{\"mobile\":\""+ USERNAME +"\",\"pwd\":\""+ PASSWORD +"\"}";
 		/* 发送请求 */
@@ -310,16 +332,27 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 * 将token放入该类的静态参数TOKEN中，供其他请求接口调用
 	 */
 	private void setNewToken() {
-		TOKEN = getToken();
-		log.info("重置token = {}", TOKEN);
+		try {
+			TOKEN = getToken();
+			log.info("重置token = {}", TOKEN);
+		} catch (Exception e) {
+			log.info("【URL_TOKEN】接口调用发生错误：{}", e.getMessage());
+		}
 	}
 
 	@Override
 	public void syncRoomMessage()  {
+		log.info("同步口袋房间消息...");
 		// 获取开启了监控的成员，逐一发送请求获取其口袋房间消息
 		List<Member> members = memberRepository.findByRoomMonitor(1);
 		for (Member member : members) {
-			JSONObject messageObject = this.getRoomMessage(String.valueOf(member.getId()), String.valueOf(member.getRoomId()), member.getName(), 5);
+			JSONObject messageObject = null;
+			try {
+				messageObject = this.getRoomMessage(String.valueOf(member.getId()), String.valueOf(member.getRoomId()), member.getName(), 5);
+			} catch (Exception e) {
+				log.info("【URL_ROOM_MESSAGE】接口调用发生错误：{}。memberName = {}", e.getMessage(), member.getName());
+				continue;
+			}
 			// 若取不到，则结束该成员房间消息的同步
 			if (messageObject == null) {
 				continue;
@@ -349,13 +382,14 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 				roomMessage.setSenderName(userObject.getString("nickName"));// 发送人昵称
 				try {
 					roomMessage.setMsgTime(DateUtil.getDateFormat(indexObject.getLong("msgTime")));// 发送时间
-				} catch (JSONException | ParseException e) {
-					log.info("格式化时间发生错误。{}", roomMessage.toString());
+				} catch (Exception e) {
+					log.info("格式化时间发生错误。{}", e.getMessage());
 				}
 				
 				roomMessageRepository.save(roomMessage);
 			}
 		}
+		log.info("同步口袋房间消息结束");
 	}
 	
 	/**
@@ -365,8 +399,11 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 * @param memberName 成员名字(日志用，可null)
 	 * @param again 再次尝试发送请求次数
 	 * @return 房间消息的json对象
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	private JSONObject getRoomMessage(String memberId, String roomId, String memberName, int again) {
+	private JSONObject getRoomMessage(String memberId, String roomId, String memberName, int again) throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		if (again == 0) {
 			log.info("已超过规定尝试次数，强制结束请求返回null");
 			return null;
@@ -375,9 +412,9 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", HEADER_ACCEPT);
-		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
-		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
+		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
 		requestPropertys.put("token", TOKEN);
 		/* 请求参数 */
 		String payloadJson = "{\"ownerId\":\""+memberId+"\",\"needTop1Msg\":\"false\",\"nextTime\":\"0\",\"roomId\":\""+roomId+"\"}";
@@ -476,14 +513,17 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 * 发送请求获取用户资料
 	 * @param userId 用户ID
 	 * @return 用户资料的json对象
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
 	 */
-	private JSONObject getBaseUserInfo(String userId) {
+	private JSONObject getBaseUserInfo(String userId) throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		Https https = new Https();
 		/* 请求头 */
 		Map<String, String> requestPropertys = new HashMap<String, String>();
-		requestPropertys.put("Accept", HEADER_ACCEPT);
-		requestPropertys.put("Content-Type", HEADER_CONTENT_TYPE);
-		requestPropertys.put("User-Agent", HEADER_USER_AGENT);
+		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
 		/* 请求参数 */
 		String payloadJson = "{\"userId\":\"" + userId + "\",\"needMuteInfo\":\"True\"}";
 		String baseUserInfoJson = https.setDataType("POST")
@@ -505,7 +545,12 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 * @return 用户昵称
 	 */
 	private String getNickname(String userId) {
-		JSONObject baseUserInfo = this.getBaseUserInfo(userId);
+		JSONObject baseUserInfo = null;
+		try {
+			baseUserInfo = this.getBaseUserInfo(userId);
+		} catch (Exception e) {
+			log.info("【URL_USER】接口调用发生错误：{}。userId = {}", e.getMessage(), userId);
+		}
 		if (baseUserInfo != null) {
 			return baseUserInfo.getString("nickname");
 		} else {
@@ -515,21 +560,31 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 
 	@Override
 	public void syncDynamic() {
-		super.syncDynamic();
+		log.info("同步微博动态...");
+		try {
+			super.syncDynamic();
+		} catch (Exception e) {
+			log.info("同步微博动态异常：{}", e.getMessage());
+		}
+		log.info("同步微博动态结束");
 	}
 
 	@Override
 	public void syncModianPool()  {
+		log.info("同步摩点项目...");
 		try {
 			super.syncModianPool();
-		} catch (JSONException | ParseException e) {
+		} catch (Exception e) {
 			log.info("同步摩点项目发生异常: {}", e.getMessage());
 		}
+		log.info("同步摩点项目结束");
 	}
 
 	@Override
 	public void syncWeiboUser() {
+		log.info("同步微博用户资料...");
 		super.syncWeiboUser();
+		log.info("同步微博用户资料结束");
 	}
 
 	

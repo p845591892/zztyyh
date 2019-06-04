@@ -55,8 +55,8 @@ public class Https {
 	public Https() {
 	}
 
-	public void refreshHttps(String url, String dataType, Map<String, String> params, Map<String, String> requestPropertys,
-			String payloadJson) {
+	public void refreshHttps(String url, String dataType, Map<String, String> params,
+			Map<String, String> requestPropertys, String payloadJson) {
 		this.url = url;
 		this.dataType = dataType;
 		this.params = params;
@@ -78,8 +78,7 @@ public class Https {
 	 * @Title: setUrl
 	 * @Description: 设置URL
 	 * @author JuFF_白羽
-	 * @param url
-	 *            请求地址
+	 * @param url 请求地址
 	 * @return Https
 	 */
 	public Https setUrl(String url) {
@@ -101,8 +100,7 @@ public class Https {
 	 * @Title: setParams
 	 * @Description: 设置参数
 	 * @author JuFF_白羽
-	 * @param params
-	 *            参数键值对
+	 * @param params 参数键值对
 	 * @return Https
 	 */
 	public Https setParams(Map<String, String> params) {
@@ -128,8 +126,7 @@ public class Https {
 	 * @Title: setRequestProperty
 	 * @Description: 设置请求头
 	 * @author JuFF_白羽
-	 * @param requestPropertys
-	 *            请求头的Map
+	 * @param requestPropertys 请求头的Map
 	 * @return Https 返回类型
 	 */
 	public Https setRequestProperty(Map<String, String> requestPropertys) {
@@ -143,8 +140,7 @@ public class Https {
 	 *               <p>
 	 *               该方法是为了无法用url?携带参数的请求而编写的，使用输出流将参数写入后台请求中。
 	 * @author JuFF_白羽
-	 * @param payloadJson
-	 *            json字符串
+	 * @param payloadJson json字符串
 	 * @return Https 返回类型
 	 */
 	public Https setPayloadJson(String payloadJson) {
@@ -157,63 +153,53 @@ public class Https {
 	 * @Description: 发送请求
 	 * @author JuFF_白羽
 	 * @return String 返回类型
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
+	 * @throws IOException
 	 */
-	public String send() {
+	public String send() throws NoSuchAlgorithmException, KeyManagementException, IOException {
 		validateRule(this.url);
 		StringBuffer buffer = null;
-		try {
-			// 以SSL的规则创建SSLContext
-			SSLContext sslContext = SSLContext.getInstance("SSL");
-			TrustManager[] tm = { new MyX509TrustManager() };
-			// 初始化
-			sslContext.init(null, tm, new SecureRandom());
-			// 获取SSLSocketFactory对象
-			SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-			URL url = new URL(installParams(this.url, this.params));
-			HttpsURLConnection urlConn = (HttpsURLConnection) url.openConnection();
-			urlConn.setDoOutput(true);
-			urlConn.setDoInput(true);
-			// 请求不使用缓存
-			urlConn.setUseCaches(false);
-			// 设置请求头
-			if (requestPropertys != null) {
-				for (Map.Entry<String, String> entry : requestPropertys.entrySet()) {
-					urlConn.setRequestProperty(entry.getKey(), entry.getValue());
-				}
+		// 以SSL的规则创建SSLContext
+		SSLContext sslContext = SSLContext.getInstance("SSL");
+		TrustManager[] tm = { new MyX509TrustManager() };
+		// 初始化
+		sslContext.init(null, tm, new SecureRandom());
+		// 获取SSLSocketFactory对象
+		SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+		URL url = new URL(installParams(this.url, this.params));
+		HttpsURLConnection urlConn = (HttpsURLConnection) url.openConnection();
+		urlConn.setDoOutput(true);
+		urlConn.setDoInput(true);
+		// 请求不使用缓存
+		urlConn.setUseCaches(false);
+		// 设置请求头
+		if (requestPropertys != null) {
+			for (Map.Entry<String, String> entry : requestPropertys.entrySet()) {
+				urlConn.setRequestProperty(entry.getKey(), entry.getValue());
 			}
-			// 设置请求方式
-			urlConn.setRequestMethod(this.dataType);
-			// 设置当前实例使用的SSLSoctetFactory
-			urlConn.setSSLSocketFactory(sslSocketFactory);
-			// 设置需要用流写入的请求参数
-			if (payloadJson != null && !payloadJson.equals("")) {
-				OutputStreamWriter writer = new OutputStreamWriter(urlConn.getOutputStream(), "UTF-8");
-				writer.write(payloadJson);
-				writer.close();
-			}
-			urlConn.connect();
-			// 读取服务器端返回的内容
-			InputStream is = urlConn.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is, "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			buffer = new StringBuffer();
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				buffer.append(line);
-			}
-		} catch (NoSuchAlgorithmException e) {
-			log.info(e.getMessage());
-		} catch (KeyManagementException e) {
-			log.info(e.getMessage());
-		} catch (MalformedURLException e) {
-			log.info(e.getMessage());
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		} finally {
-			refreshHttps(null, null, null, null, null);// 清空参数
 		}
+		// 设置请求方式
+		urlConn.setRequestMethod(this.dataType);
+		// 设置当前实例使用的SSLSoctetFactory
+		urlConn.setSSLSocketFactory(sslSocketFactory);
+		// 设置需要用流写入的请求参数
+		if (payloadJson != null && !payloadJson.equals("")) {
+			OutputStreamWriter writer = new OutputStreamWriter(urlConn.getOutputStream(), "UTF-8");
+			writer.write(payloadJson);
+			writer.close();
+		}
+		urlConn.connect();
+		// 读取服务器端返回的内容
+		InputStream is = urlConn.getInputStream();
+		InputStreamReader isr = new InputStreamReader(is, "utf-8");
+		BufferedReader br = new BufferedReader(isr);
+		buffer = new StringBuffer();
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			buffer.append(line);
+		}
+		refreshHttps(null, null, null, null, null);// 清空参数
 		return buffer.toString();
 	}
 
@@ -242,8 +228,7 @@ public class Https {
 	 * @Title: validateRule
 	 * @Description: 对传入的URL进行必要的校验
 	 * @author JuFF_白羽
-	 * @param url
-	 *            请求地址
+	 * @param url 请求地址
 	 */
 	public static void validateRule(String url) {
 		if (url.equals("")) {
@@ -258,10 +243,8 @@ public class Https {
 	 * @Title: installParams
 	 * @Description: 为请求地址增加参数
 	 * @author JuFF_白羽
-	 * @param url
-	 *            请求地址
-	 * @param params
-	 *            装有参数的Map
+	 * @param url    请求地址
+	 * @param params 装有参数的Map
 	 * @return String 用?带参数的url
 	 */
 	private static String installParams(String url, Map<String, String> params) {
@@ -284,7 +267,7 @@ public class Https {
 	 * @Description: 根据图片网络地址,发送https请求获取一个Image对象
 	 * @author JuFF_白羽
 	 * @return Image 图形图像超类
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public Image getImage() throws IOException {
 		validateRule(this.url);
@@ -304,7 +287,7 @@ public class Https {
 		} catch (IOException e) {
 			log.info(e.getMessage());
 		} catch (Exception e) {
-			log.info( e.getMessage());
+			log.info(e.getMessage());
 		} finally {
 			if (inputStream != null) {
 				inputStream.close();

@@ -3,6 +3,8 @@ package com.gnz48.zzt.job;
 import java.text.ParseException;
 
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,13 +22,12 @@ import com.gnz48.zzt.service.Https2019Service;
 @Component // 此注解必加
 @EnableScheduling // 此注解必加
 public class SyncTask {
+	
+	private static final Logger log = LoggerFactory.getLogger(SyncTask.class);
 
 	public SyncTask() {
 	}
 
-	/**
-	 * 2019年版Https服务接口
-	 */
 	@Autowired
 	Https2019Service https2019Service;
 

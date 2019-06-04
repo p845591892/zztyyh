@@ -1,140 +1,138 @@
-$(document)
-    .ready(
-        function () {
-            /* 友情提示 */
-            var unique_id = $.gritter
-                .add({
-                    // (string | mandatory) the heading of the
-                    // notification
-                    title: '友情提示',
-                    // (string | mandatory) the text inside the
-                    // notification
-                    text: '本页面进行的配置后，需要在服务器使用QQ打开对应的聊天窗口后，才能在同步消息的同时把房间消息发送到对应的聊天窗口中。',
-                    // (string | optional) the image to display on
-                    // the left
-                    image: '../assets/img/ui-sam.jpg',
-                    // (bool | optional) if you want it to fade out
-                    // on its own or just sit there
-                    sticky: true,
-                    // (int | optional) the time you want it to be
-                    // alive for before fading out
-                    time: '',
-                    // (string | optional) the class name you want
-                    // to apply to that specific message
-                    class_name: 'my-sticky-class'
-                });
+$(document).ready(function () {
+    /* 友情提示 */
+    var unique_id = $.gritter.add({
+        // (string | mandatory) the heading of the
+        // notification
+        title: '友情提示',
+        // (string | mandatory) the text inside the
+        // notification
+        text: '本页面进行的配置后，需要在服务器使用QQ打开对应的聊天窗口后，才能在同步消息的同时把房间消息发送到对应的聊天窗口中。',
+        // (string | optional) the image to display on
+        // the left
+        image: '../assets/img/ui-sam.jpg',
+        // (bool | optional) if you want it to fade out
+        // on its own or just sit there
+        sticky: true,
+        // (int | optional) the time you want it to be
+        // alive for before fading out
+        time: '',
+        // (string | optional) the class name you want
+        // to apply to that specific message
+        class_name: 'my-sticky-class'
+    });
 
-            /* 成员表格 */
-            $("#member_table")
-                .bootstrapTable(
+    /* 成员表格 */
+    $("#member_table")
+        .bootstrapTable(
+            {
+                columns: [
                     {
-                        columns: [
-                            {
-                                field: "id",
-                                title: "成员ID",
-                                visible: false
-                            },
-                            {
-                                field: "avatar",
-                                title: "公式照",
-                                width: 65,
-                                formatter: avatarHtml
-                            },
-                            {
-                                field: "name",
-                                title: "名字",
-                                width: 65
-                            },
-                            {
-                                field: "pinyin",
-                                title: "名字拼音"
-                            },
-                            {
-                                field: "nickname",
-                                title: "昵称"
-                            },
-                            {
-                                field: "groupId",
-                                title: "所属团体ID",
-                                visible: false
-                            },
-                            {
-                                field: "groupName",
-                                title: "所属团体"
-                            },
-                            {
-                                field: "teamId",
-                                title: "所属队伍ID",
-                                visible: false
-                            },
-                            {
-                                field: "teamName",
-                                title: "所属队伍"
-                            },
-                            {
-                                field: "joinTime",
-                                title: "加入时间"
-                            },
-                            {
-                                field: "birthplace",
-                                title: "出生地"
-                            },
-                            {
-                                field: "roomId",
-                                title: "口袋房间ID",
-                                visible: false
-                            },
-                            {
-                                field: "roomName",
-                                title: "口袋房间名字"
-                            },
-                            {
-                                field: "topic",
-                                title: "话题"
-                            },
-                            {
-                                field: "roomMonitor",
-                                title: "口袋房间监控",
-                                width: 65,
-                                formatter: roomMonitorHtml
-                            }],
-                        // cardView : true,
-                        striped: true,
-                        pagination: true,
-                        sidePagination: "server",
-                        responseHandler: responseHandler,
-                        queryParamsType: '',
-                        queryParams: queryParams,
-                        pageNumber: 1,
-                        pageSize: 15,
-                        paginationLoop: false,
-                        pageList: [15, 25, 50],
-                        cache: false,
-                        showColumns: true,
-                        showRefresh: true,
-                        toolbar: "#toolbar",
-                        toolbarAlign: "left",
-                        url: "/resource/member",
-                        detailView: true,
-                        detailFormatter: detailFormatter
-                    });
-
-            /* 更改团体后的操作 */
-            $("#select1").change(function () {
-                var group = $("#select1").val();
-                getTeam(group);
+                        field: "id",
+                        title: "成员ID",
+                        visible: false
+                    },
+                    {
+                        field: "avatar",
+                        title: "公式照",
+                        width: 65,
+                        formatter: avatarHtml
+                    },
+                    {
+                        field: "name",
+                        title: "名字",
+                        width: 65
+                    },
+                    {
+                        field: "pinyin",
+                        title: "名字拼音"
+                    },
+                    {
+                        field: "nickname",
+                        title: "昵称"
+                    },
+                    {
+                        field: "groupId",
+                        title: "所属团体ID",
+                        visible: false
+                    },
+                    {
+                        field: "groupName",
+                        title: "所属团体"
+                    },
+                    {
+                        field: "teamId",
+                        title: "所属队伍ID",
+                        visible: false
+                    },
+                    {
+                        field: "teamName",
+                        title: "所属队伍"
+                    },
+                    {
+                        field: "joinTime",
+                        title: "加入时间"
+                    },
+                    {
+                        field: "birthplace",
+                        title: "出生地"
+                    },
+                    {
+                        field: "roomId",
+                        title: "口袋房间ID",
+                        visible: false
+                    },
+                    {
+                        field: "roomName",
+                        title: "口袋房间名字"
+                    },
+                    {
+                        field: "topic",
+                        title: "话题"
+                    },
+                    {
+                        field: "roomMonitor",
+                        title: "口袋房间监控",
+                        width: 65,
+                        formatter: roomMonitorHtml
+                    }],
+                // cardView : true,
+                striped: true,
+                pagination: true,
+                sidePagination: "server",
+                responseHandler: responseHandler,
+                queryParamsType: '',
+                queryParams: queryParams,
+                pageNumber: 1,
+                pageSize: 15,
+                paginationLoop: false,
+                pageList: [15, 25, 50],
+                cache: false,
+                showColumns: true,
+                showRefresh: true,
+                toolbar: "#toolbar",
+                toolbarAlign: "left",
+                url: "/resource/member",
+                detailView: true,
+                detailFormatter: detailFormatter
             });
 
-            /* 查询 */
-            $("#btn_select").on("click", function () {
-                $("#member_table").bootstrapTable("refresh");
-            });
+    /* 更改团体后的操作 */
+    $("#select1").change(function () {
+        var group = $("#select1").val();
+        getTeam(group);
+    });
 
-            /* 点击头像弹窗 */
-            jQuery(".fancybox").fancybox();
-            $("select.styled").customSelect();
+    /* 查询 */
+    $("#btn_select").on("click", function () {
+        $("#member_table").bootstrapTable("refreshOptions", { pageNumber: 1 });
+        $("#member_table").bootstrapTable("refresh");
+    });
 
-        });
+    /* 点击头像弹窗 */
+    jQuery(".fancybox").fancybox();
+    // $("select.styled").customSelect();
+
+});
 
 /* 下拉框 */
 var select_team = {

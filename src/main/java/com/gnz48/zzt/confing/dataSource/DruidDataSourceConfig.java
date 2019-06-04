@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.gnz48.zzt.util.EncrypAES;
 
 /**
  * Copyright: Copyright (c) 2018 LanRu-Caifu
@@ -89,7 +90,7 @@ public class DruidDataSourceConfig {
 
 		datasource.setUrl(url);
 		datasource.setUsername(username);
-		datasource.setPassword(password);
+		datasource.setPassword(EncrypAES.decryptByStr(password));
 		datasource.setDriverClassName(driverClassName);
 		datasource.setInitialSize(initialSize);
 		datasource.setMinIdle(minIdle);
