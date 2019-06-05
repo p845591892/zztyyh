@@ -736,44 +736,20 @@ public class HttpsService {
 		
 		if (jsonObject.getInt("ok") == 1) {// 成功返回结果
 			JSONObject data = jsonObject.getJSONObject("data");
+			JSONObject userInfo = data.getJSONObject("userInfo");
+			JSONObject tabsInfo = data.getJSONObject("tabsInfo");
 			
-//			if (data.has("cards")) {// cards情况的结果
-//				JSONArray cards = data.getJSONArray("cards");
-//				
-//				for (int i = 0; i < cards.length(); i++) {
-//					JSONObject card = cards.getJSONObject(i);
-//
-//					if (card.getInt("card_type") == 9) {
-//						JSONObject user = card.getJSONObject("mblog").getJSONObject("user");
-//
-//						WeiboUser weiboUser = new WeiboUser();
-//						weiboUser.setAvatarHd(user.getString("avatar_hd"));
-//						weiboUser.setContainerId(containerUserId);
-//						weiboUser.setFollowCount(user.getInt("follow_count"));
-//						weiboUser.setFollowersCount(user.getInt("followers_count"));
-//						weiboUser.setId(user.getLong("id"));
-//						weiboUser.setUserName(user.getString("screen_name"));
-//
-//						return weiboUser;
-//					} else {
-//						continue;
-//					}
-//				}
-//			}
+			WeiboUser weiboUser = new WeiboUser();
+			weiboUser.setAvatarHd(userInfo.getString("avatar_hd"));
+			weiboUser.setContainerUserId(containerUserId);
+			weiboUser.setContainerDynamicId(tabsInfo.getJSONArray("tabs").getJSONObject(1).getLong("containerid"));
+			weiboUser.setFollowCount(userInfo.getInt("follow_count"));
+			weiboUser.setFollowersCount(userInfo.getInt("followers_count"));
+			weiboUser.setId(userInfo.getLong("id"));
+			weiboUser.setUserName(userInfo.getString("screen_name"));
 			
-//			if (data.has("userInfo")) {// 存在userInfo情况的结果
-				JSONObject userInfo = data.getJSONObject("userInfo");
-				JSONObject tabsInfo = data.getJSONObject("tabsInfo");
-				
-				WeiboUser weiboUser = new WeiboUser();
-				weiboUser.setAvatarHd(userInfo.getString("avatar_hd"));
-				weiboUser.setContainerUserId(containerUserId);
-				weiboUser.setContainerDynamicId(tabsInfo.getJSONArray("tabs").getJSONObject(1).getLong("containerid"));
-				weiboUser.setFollowCount(userInfo.getInt("follow_count"));
-				weiboUser.setFollowersCount(userInfo.getInt("followers_count"));
-				weiboUser.setId(userInfo.getLong("id"));
-//			}
-
+			return weiboUser;
+			
 		}
 		return null;
 	}
@@ -790,7 +766,6 @@ public class HttpsService {
 				newWeiboUser = getWeiboUser(weiboUser.getContainerUserId());
 			} catch (Exception e) {
 				log.info("同步微博【{}】错误：{}", weiboUser.getUserName(), e.getMessage());
-				e.printStackTrace();
 			}
 			if (newWeiboUser != null) {
 				weiboUserRepository.save(newWeiboUser);

@@ -156,7 +156,7 @@
 
     <!-- 工具容器 -->
     <div id="toolbar" class="btn-group">
-        <form class="form-inline">
+        <form class="form-inline" onkeydown="if(event.keyCode==13){return false;}">
             <div class="form-group">
                 <input id="input1" class="form-control round-form" name="searchText" placeholder="名字或拼音缩写" />
             </div>

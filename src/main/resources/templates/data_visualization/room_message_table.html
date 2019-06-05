@@ -152,7 +152,7 @@
 
     <!-- 工具容器 -->
     <div id="toolbar" class="btn-group">
-        <form class="form-inline">
+        <form class="form-inline" onkeydown="if(event.keyCode==13){return false;}">
             <div class="form-group">
                 <input type="text" class="form-control round-form" id="input1" name="searchText"
                     placeholder="成员名字或消息内容">

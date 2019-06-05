@@ -60,7 +60,7 @@ $(document).ready(function () {
 
     /* 查询 */
     $("#btn_select").on("click", function () {
-        $("#room_message_table").bootstrapTable("refreshOptions", {pageNumber : 1});
+        $("#room_message_table").bootstrapTable("refreshOptions", { pageNumber: 1 });
         $("#room_message_table").bootstrapTable("refresh");
     });
 
@@ -105,7 +105,11 @@ var msgContentHtml = function (value, row, index) {
     if (msgObject == "IMAGE" || msgObject == "image") {
         msgContent = msgContent.replace("<img>", "");
         msgContent = msgContent.replace("[图片]", "");
-        return "<img src=\"" + msgContent + "\" width=\"200\"/>";
+        return "<a target=\"_blank\" href=\""
+            + msgContent
+            + "\"><img src=\""
+            + msgContent
+            + "\" class=\"\" width=\"20%\" alt=\"\"/></a>";
 
     } else if (msgObject == "live" || msgObject == "diantai" || msgObject == "LIVEPUSH") {
         var temp = null;
