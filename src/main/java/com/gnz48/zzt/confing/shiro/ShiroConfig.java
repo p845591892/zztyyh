@@ -1,5 +1,7 @@
 package com.gnz48.zzt.confing.shiro;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,9 +10,17 @@ import javax.servlet.Filter;
 
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.gnz48.zzt.confing.shiro.filter.ShiroAuthcFilter;
 import com.gnz48.zzt.confing.shiro.filter.ShiroPermsFilter;
+import com.gnz48.zzt.confing.shiro.listener.ShiroSessionListener;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 
@@ -51,21 +62,62 @@ public class ShiroConfig {
 		ehCacheManager.setCacheManagerConfigFile("classpath:ehcache/ehcache.xml");
 		return ehCacheManager;
 	}
-	
-//	/**
-//	 * session管理器
-//	 */
-//	@Bean
-//	public DefaultWebSessionManager defaultWebSessionManager() {
-//		log.info("===============>> shiro-设置session");
-//		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-//		defaultWebSessionManager.setSessionIdCookieEnabled(true);
-//		defaultWebSessionManager.setGlobalSessionTimeout(21600000);
-//		defaultWebSessionManager.setDeleteInvalidSessions(true);
-//		defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
-//		defaultWebSessionManager.setSessionIdUrlRewritingEnabled(false);
-//		return defaultWebSessionManager;
-//	}
+
+	/**
+	 * 配置会话ID生成器
+	 * 
+	 * @return
+	 */
+	@Bean
+	public SessionIdGenerator sessionIdGenerator() {
+		return new JavaUuidSessionIdGenerator();
+	}
+
+	/**
+	 * SessionDAO的作用是为Session提供CRUD并进行持久化的一个shiro组件 MemorySessionDAO 直接在内存中进行会话维护
+	 * EnterpriseCacheSessionDAO
+	 * 提供了缓存功能的会话维护，默认情况下使用MapCache实现，内部使用ConcurrentHashMap保存缓存的会话。
+	 * 
+	 * @return
+	 */
+	@Bean
+	public SessionDAO sessionDAO() {
+		EnterpriseCacheSessionDAO enterpriseCacheSessionDAO = new EnterpriseCacheSessionDAO();
+		// 使用ehCacheManager
+		enterpriseCacheSessionDAO.setCacheManager(ehCacheManager());
+		// 设置session缓存的名字 默认为 shiro-activeSessionCache
+		enterpriseCacheSessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
+		// sessionId生成器
+		enterpriseCacheSessionDAO.setSessionIdGenerator(sessionIdGenerator());
+		return enterpriseCacheSessionDAO;
+	}
+
+	/**
+	 * session管理器
+	 */
+	@Bean
+	public SessionManager sessionManager() {
+		log.info("===============>> shiro-设置session");
+		DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+		// 配置监听
+		Collection<SessionListener> listeners = new ArrayList<SessionListener>();
+		listeners.add(new ShiroSessionListener());
+
+		sessionManager.setSessionListeners(listeners);
+		sessionManager.setGlobalSessionTimeout(21600000);// 全局会话超时
+		sessionManager.setDeleteInvalidSessions(true);// 过期后调用SessionDAO的delete方法删除会话
+		sessionManager.setSessionDAO(sessionDAO());
+		sessionManager.setSessionIdCookie(new SimpleCookie("sid"));// 保存sessionId的cookie
+		// 是否开启定时调度器进行检测过期session 默认为true
+		sessionManager.setSessionValidationSchedulerEnabled(true);
+		// 设置session失效的扫描时间, 清理用户直接关闭浏览器造成的孤立会话 默认为 1个小时
+		// 设置该属性 就不需要设置 ExecutorServiceSessionValidationScheduler
+		// 底层也是默认自动调用ExecutorServiceSessionValidationScheduler
+		sessionManager.setSessionValidationInterval(3600000);
+		//取消url 后面的 JSESSIONID
+	    sessionManager.setSessionIdUrlRewritingEnabled(false);
+		return sessionManager;
+	}
 
 	/**
 	 * @Description: 安全管理器
@@ -76,7 +128,7 @@ public class ShiroConfig {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setRealm(myShiroRealm());
 		securityManager.setCacheManager(ehCacheManager());
-//		securityManager.setSessionManager(defaultWebSessionManager());
+		securityManager.setSessionManager(sessionManager());
 		return securityManager;
 	}
 
@@ -99,7 +151,7 @@ public class ShiroConfig {
 		filters.put("authc", new ShiroAuthcFilter());
 		filters.put("perms", new ShiroPermsFilter());
 		shiroFilterFactoryBean.setFilters(filters);
-		
+
 		// 拦截器.
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		// 配置不会被拦截的链接 顺序判断

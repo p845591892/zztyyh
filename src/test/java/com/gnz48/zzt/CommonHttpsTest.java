@@ -2,11 +2,14 @@
 //
 //import java.awt.Image;
 //import java.io.File;
+//import java.io.IOException;
 //import java.lang.reflect.InvocationTargetException;
 //import java.lang.reflect.Method;
 //import java.net.MalformedURLException;
 //import java.net.URL;
 //import java.net.URLClassLoader;
+//import java.security.KeyManagementException;
+//import java.security.NoSuchAlgorithmException;
 //import java.text.ParseException;
 //import java.util.HashMap;
 //import java.util.Map;
@@ -39,9 +42,12 @@
 //
 //	/**
 //	 * 获取成员房间资料
+//	 * @throws IOException 
+//	 * @throws NoSuchAlgorithmException 
+//	 * @throws KeyManagementException 
 //	 */
 //	@Test
-//	public void getMemberRoomTest() {
+//	public void getMemberRoomTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 ////		https2019Service.syncMember();
 //
 //		Https https = new Https();
@@ -62,9 +68,12 @@
 //
 //	/**
 //	 * 获取成员资料
+//	 * @throws IOException 
+//	 * @throws NoSuchAlgorithmException 
+//	 * @throws KeyManagementException 
 //	 */
 //	@Test
-//	public void getMemberTest() {
+//	public void getMemberTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		Https https = new Https();
 //
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
@@ -82,9 +91,12 @@
 //
 //	/**
 //	 * 获取Token
+//	 * @throws IOException 
+//	 * @throws NoSuchAlgorithmException 
+//	 * @throws KeyManagementException 
 //	 */
 //	@Test
-//	public void getTokenTest() {
+//	public void getTokenTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		Https https = new Https();
 //		/* 请求参数 */
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
@@ -104,9 +116,12 @@
 //
 //	/**
 //	 * 获取房间消息
+//	 * @throws IOException 
+//	 * @throws NoSuchAlgorithmException 
+//	 * @throws KeyManagementException 
 //	 */
 //	@Test
-//	public void getRoomMessageTest() {
+//	public void getRoomMessageTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		Https https = new Https();
 //		/* 请求头 */
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
@@ -162,11 +177,8 @@
 //
 //	@Test
 //	public void stringTest() {
-//		try {
-//			System.out.println(DateUtil.getDate(DateUtil.getDateFormat(1558766916168l)));
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
+//		String imageUrl = "http://203.195.205.79:1029/index";
+//		System.out.println(imageUrl.startsWith("http://"));
 //	}
 //	
 //	@Test

@@ -3,11 +3,12 @@ package com.gnz48.zzt.contorller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,7 +21,7 @@ import com.gnz48.zzt.vo.ResultVO;
  * @author shiro
  *
  */
-@RestController
+@Controller
 @RequestMapping("/file")
 public class FileContorller {
 	
@@ -45,6 +46,7 @@ public class FileContorller {
 	/**
 	 * 上传头像
 	 */
+	@ResponseBody
 	@PostMapping("/upload/avatar")
 	public ResultVO uploadAvatar(@RequestParam(name = "avatar") MultipartFile multipartFile) {
 		ResultVO result = new ResultVO();
@@ -73,6 +75,7 @@ public class FileContorller {
 	/**
 	 * 上传定时任务job类
 	 */
+	@ResponseBody
 	@PostMapping("/upload/job")
 	public ResultVO uploadQuartz(@RequestParam(name = "job") MultipartFile multipartFile) {
 		ResultVO result = new ResultVO();

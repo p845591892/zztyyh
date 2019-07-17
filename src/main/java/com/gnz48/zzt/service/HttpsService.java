@@ -696,14 +696,14 @@ public class HttpsService {
 	}
 
 	/**
-	 * @Description: 根据SOURCE_URL，获取完整的图片地址
+	 * @Description: 根据SOURCE_URL，获取完整的图片地址（仅限SNH48系列图片资源）
 	 * @author JuFF_白羽
 	 * @param imageUrl
 	 *            原图片的地址，不完整的将会自行补全
 	 * @return String 完整的图片地址
 	 */
 	protected String getImageUrl(String imageUrl) {
-		if (imageUrl.indexOf("http://") == -1) {
+		if (!imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
 			imageUrl = SOURCE_URL + imageUrl;
 		}
 		return imageUrl;

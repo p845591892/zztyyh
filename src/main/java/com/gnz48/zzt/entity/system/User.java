@@ -1,5 +1,6 @@
 package com.gnz48.zzt.entity.system;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -20,7 +21,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "T_SYS_USER")
-public class User {
+public class User implements Serializable{
+
+	private static final long serialVersionUID = -7983626628507034805L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

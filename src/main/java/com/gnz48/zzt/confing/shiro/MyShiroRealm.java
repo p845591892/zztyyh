@@ -4,9 +4,12 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -50,8 +53,8 @@ public class MyShiroRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		 log.info("----->> shiro-获取身份权限");
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-		String username = (String) principals.getPrimaryPrincipal();
-		User user = userRepository.findByUsername(username);
+		User user = (User) principals.getPrimaryPrincipal();
+//		User user = userRepository.findByUsername(username);
 		for (Role role : user.getRoles()) {
 			authorizationInfo.addRole(role.getRole());
 			for (Permission p : role.getPermissions()) {
@@ -72,9 +75,9 @@ public class MyShiroRealm extends AuthorizingRealm {
 		try {
 			user = userRepository.findByUsername(username);
 		} catch (Exception e) {
-			log.info("登陆校验发生异常：{}", e.getMessage());
+			log.info("查询用户异常：{}", e.getMessage());
 		}
-		log.info("验证结果：{}", username);
+		log.info("认证用户：{}", username);
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();
 		session.setAttribute("loginName", username);
@@ -88,12 +91,30 @@ public class MyShiroRealm extends AuthorizingRealm {
 			// 用户未激活
 			throw new ActivationAccountException();
 		} else {
-			SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user.getUsername(), // 用户名
+			SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user, // 用户名
 					user.getPassword(), // 密码
 					ByteSource.Util.bytes(user.getUsername() + user.getSalt()), // salt=username+salt
 					getName() // realm name
 			);
 			return authenticationInfo;
+		}
+	}
+	
+	@Override
+	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info)
+			throws AuthenticationException {
+		CredentialsMatcher cm = getCredentialsMatcher();
+		if (cm != null) {
+			if (!cm.doCredentialsMatch(token, info)) {
+				User user = (User) info.getPrincipals().getPrimaryPrincipal();
+				// not successful - throw an exception to indicate this:
+				String msg = "提交的令牌token [" + token + "] 不匹配.";
+				throw new IncorrectCredentialsException(msg);
+			}
+		} else {
+			throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
+					+ "credentials during authentication.  If you do not wish for credentials to be examined, you "
+					+ "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
 		}
 	}
 
