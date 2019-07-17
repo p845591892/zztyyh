@@ -703,7 +703,7 @@ public class HttpsService {
 	 * @return String 完整的图片地址
 	 */
 	protected String getImageUrl(String imageUrl) {
-		if (!imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+		if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
 			imageUrl = SOURCE_URL + imageUrl;
 		}
 		return imageUrl;
