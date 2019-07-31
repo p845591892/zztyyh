@@ -20,14 +20,9 @@ spring:
     filters: stat,log4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     driverClassName: com.mysql.jdbc.Driver
-#Mac
-#    url: jdbc:mysql://localhost:3306/zztyyh?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true
-#    username: root
-#    password: 040165175F092E519E1186175C3440D4
-#服务器(本机)
     url: jdbc:mysql://172.16.0.6:3306/zztyyh?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
-    username: zztyyh
-    password: 387F5B029460A252307AF11F23DFE733
+    username: #{username}
+    password: #{password}
   jpa:
     database: mysql
     hibernate.ddl-auto: none
@@ -44,8 +39,8 @@ spring:
   #邮件配置
   mail:
     host: smtp.qq.com
-    username: lichaoyi0112@qq.com
-    password: ydgajkqnmzvqbchf
+    username: #{username}
+    password: #{password}
     properties:
       mail: 
         smtp:
@@ -66,8 +61,7 @@ spring:
 
 #上传文件的外部静态根目录
 web:
-#  upload-path: file:/Users/shiro/Documents/fileDepot/
-  upload-path: file:C:\Users\Administrator\Desktop\fileDepot\
+  upload-path: file:#{path}
   
 #MyBatis配置
 mybatis:
@@ -84,5 +78,5 @@ pagehelper:
   
 #口袋48配置
 koudai48:
-  username: 18824171764
-  password: woshi182tidu
+  username: #{username}
+  password: #{password}
