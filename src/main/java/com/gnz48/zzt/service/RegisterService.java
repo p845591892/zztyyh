@@ -73,7 +73,7 @@ public class RegisterService {
 		user.setNickname(vo.getNickname());
 		user.setPassword(StringUtil.shiroMd5(vo.getUsername(), vo.getPassword()));
 		user.setUsername(vo.getUsername());
-		user.setState((byte) 0);
+		user.setState((byte) 1);
 		user.setSalt(StringUtil.shiroMd5("zzt", DateUtil.getDate(new Date(), "yyyyMMdd")));
 		user.setEmail(vo.getEmail());
 		String emailCaptcha = MathUtil.random(6);

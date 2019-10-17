@@ -100,6 +100,11 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 	 */
 	private static final String URL_USER = "https://pocketapi.48.cn/user/api/v1/user/info/home";
 	
+	/**
+	 * 口袋48用户资料查询接口
+	 */
+	private static final String URL_ROOM_MESSAGE_FLIPCARD = "https://pocketapi.48.cn/idolanswer/api/idolanswer/v1/question_answer/detail";
+	
 	@Autowired
 	private Https2019Dao https2019Dao;
 	@Autowired
@@ -471,12 +476,20 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 			msgContent.append(super.getImageUrl(extInfoObject.getString("liveCover")));
 			
 		} else if (messageType.equals("FLIPCARD")) {// 翻牌类型
+			JSONObject contentObject = null;
+			String questionId = extInfoObject.getString("questionId");
+			String answerId = extInfoObject.getString("answerId");
+			try {
+				contentObject = this.getFlipcardContent(questionId, answerId);// 获取翻牌详情，目的是拿到这个翻牌是谁发的
+			} catch (KeyManagementException | NoSuchAlgorithmException | JSONException | IOException e) {
+				log.info("获取翻牌消息异常questionId={}, answerId={} : {}", questionId, answerId, e.getMessage());
+			}
 			msgContent.append("[");
 			msgContent.append(indexObject.getString("bodys"));
 			msgContent.append("]<br>");
 			msgContent.append(extInfoObject.getString("answer"));
 			msgContent.append("<br>______________________________<br>");
-			msgContent.append(this.getNickname(extInfoObject.getString("answerId")));
+			msgContent.append(contentObject != null ? contentObject.getString("userName") : questionId + "|" + answerId);
 			msgContent.append(" : ");
 			msgContent.append(extInfoObject.getString("question"));
 			
@@ -507,6 +520,39 @@ public class Https2019ServiceImpl extends HttpsService implements Https2019Servi
 		}
 		
 		return msgContent.toString();
+	}
+
+	/**
+	 * 获取口袋房间翻牌详情信息<p>
+	 * 本请求返回值包括问题、回答、提问人昵称、回答人昵称（重要）等。
+	 * @param questionId 问题ID
+	 * @param answerId 回答ID
+	 * @return 翻牌详情的json对象
+	 * @throws KeyManagementException
+	 * @throws NoSuchAlgorithmException
+	 * @throws IOException
+	 */
+	private JSONObject getFlipcardContent(String questionId, String answerId) throws KeyManagementException, NoSuchAlgorithmException, IOException {
+		Https https = new Https();
+		/* 请求头 */
+		Map<String, String> requestPropertys = new HashMap<String, String>();
+		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+		requestPropertys.put("token", TOKEN);
+		/* 请求参数 */
+		String payloadJson = "{\"questionId\":\"" + questionId + "\",\"answerId\":\"" + answerId + "\"}";
+		/* 发送请求 */
+		String flipcardJson = https.setDataType("POST")
+														.setRequestProperty(requestPropertys)
+														.setPayloadJson(payloadJson)
+														.setUrl(URL_ROOM_MESSAGE_FLIPCARD)
+														.send();
+		JSONObject flipcardObject = new JSONObject(flipcardJson);
+		if (flipcardObject.getBoolean("success")) {
+			return flipcardObject.getJSONObject("content");
+		}
+		return null;
 	}
 
 	/**

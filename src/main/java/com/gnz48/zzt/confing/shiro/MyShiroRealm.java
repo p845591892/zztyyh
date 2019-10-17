@@ -4,19 +4,15 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
-import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +44,10 @@ public class MyShiroRealm extends AuthorizingRealm {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		 log.info("----->> shiro-获取身份权限");
+		log.info("----->> shiro-获取身份权限");
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 		User user = (User) principals.getPrimaryPrincipal();
 //		User user = userRepository.findByUsername(username);
@@ -93,28 +89,10 @@ public class MyShiroRealm extends AuthorizingRealm {
 		} else {
 			SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user, // 用户名
 					user.getPassword(), // 密码
-					ByteSource.Util.bytes(user.getUsername() + user.getSalt()), // salt=username+salt
+//					 ByteSource.Util.bytes(user.getUsername()), //salt=username
 					getName() // realm name
 			);
 			return authenticationInfo;
-		}
-	}
-	
-	@Override
-	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info)
-			throws AuthenticationException {
-		CredentialsMatcher cm = getCredentialsMatcher();
-		if (cm != null) {
-			if (!cm.doCredentialsMatch(token, info)) {
-				User user = (User) info.getPrincipals().getPrimaryPrincipal();
-				// not successful - throw an exception to indicate this:
-				String msg = "提交的令牌token [" + token + "] 不匹配.";
-				throw new IncorrectCredentialsException(msg);
-			}
-		} else {
-			throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
-					+ "credentials during authentication.  If you do not wish for credentials to be examined, you "
-					+ "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
 		}
 	}
 

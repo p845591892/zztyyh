@@ -174,11 +174,12 @@
 //			e.printStackTrace();
 //		}
 //	}
-//
+//	
 //	@Test
 //	public void stringTest() {
 //		String imageUrl = "http://203.195.205.79:1029/index";
 //		System.out.println(imageUrl.startsWith("http://"));
+//		
 //	}
 //	
 //	@Test

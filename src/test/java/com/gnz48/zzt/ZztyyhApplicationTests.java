@@ -2,8 +2,9 @@
 //
 //import java.awt.AWTException;
 //import java.awt.Image;
-//import java.io.File;
 //import java.io.IOException;
+//import java.security.KeyManagementException;
+//import java.security.NoSuchAlgorithmException;
 //import java.text.ParseException;
 //import java.text.SimpleDateFormat;
 //import java.util.Date;
@@ -11,23 +12,13 @@
 //import java.util.Locale;
 //import java.util.Map;
 //
-//import javax.mail.MessagingException;
-//import javax.mail.internet.MimeMessage;
-//
-//import org.apache.velocity.VelocityContext;
 //import org.json.JSONArray;
 //import org.json.JSONException;
 //import org.json.JSONObject;
 //import org.junit.Test;
-//import org.junit.runner.RunWith;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.core.io.FileSystemResource;
-//import org.springframework.mail.javamail.JavaMailSender;
-//import org.springframework.mail.javamail.MimeMessageHelper;
-//import org.springframework.test.context.junit4.SpringRunner;
 //
 //import com.gnz48.zzt.dao.WebDao;
 //import com.gnz48.zzt.repository.system.UserRepository;
@@ -37,11 +28,10 @@
 //import com.gnz48.zzt.util.DateUtil;
 //import com.gnz48.zzt.util.Https;
 //import com.gnz48.zzt.util.ImageUtil;
-//import com.gnz48.zzt.util.Mail;
 //import com.gnz48.zzt.util.StringUtil;
 //
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
+////@RunWith(SpringRunner.class)
+////@SpringBootTest
 //public class ZztyyhApplicationTests {
 //
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ZztyyhApplicationTests.class);
@@ -63,7 +53,7 @@
 //
 //	/* 获取微博动态 */
 //	@Test
-//	public void syncDynamicTest() {
+//	public void syncDynamicTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		httpsService.syncDynamic();
 //	}
 //
@@ -79,7 +69,7 @@
 //		try {
 //			sendMessageService.sendWeiboDynamic();
 //		} catch (IOException e) {
-//			LOGGER.info(e.getMessage() , e.toString());
+//			LOGGER.info(e.getMessage(), e.toString());
 //		}
 //	}
 //
@@ -140,7 +130,7 @@
 //	}
 //
 //	@Test
-//	public void getKoudaiUser() {
+//	public void getKoudaiUser() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		Https https = new Https();
 //		String name = "821757";
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
@@ -158,7 +148,7 @@
 //	}
 //
 //	@Test
-//	public void getMemberFansAndRoom() {
+//	public void getMemberFansAndRoom() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		Https https = new Https();
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
 //		requestPropertys.put("Content-Type", "application/json; charset=utf-8");
@@ -187,7 +177,7 @@
 //
 //	/* 获取微博超话帖子 */
 //	@Test
-//	public void getWeiboChaohuaTest() {
+//	public void getWeiboChaohuaTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
 //		Https https = new Https();
 //		// 设置请求头
 //		Map<String, String> requestPropertys = new HashMap<String, String>();
@@ -220,10 +210,10 @@
 //	@Test
 //	public void sendMailTest() {
 //		// Mail.sendTextMail("测试邮件", "这是一条测试邮件", "847109667@qq.com");
-//		
+//
 //		// Mail.sendFileMail("测试邮件", "这是一条测试邮件", "847109667@qq.com", new
 //		// File("D:\\李超熠\\赴日签证材料\\赴日行程单.pdf"));
-//		
+//
 //		// Mail.sendInlineMail("测试邮件", "<html><body><img src=\"cid:1\"
 //		// ></body></html>", "847109667@qq.com",
 //		// new File("D:\\李超熠\\新建文件夹\\1.jpg"));
@@ -232,6 +222,145 @@
 //		// model.put("username", "JuFF_白羽");
 //		// Mail.sendTemplateMail("测试邮件",
 //		// "/templates/mail_template/template1.vm", model, "847109667@qq.com");
+//	}
+//
+//	
+//	
+//	/**
+//	 * 请求头
+//	 */
+//	private static final String APP_HEADER_ACCEPT = "*/*";
+//	private static final String APP_HEADER_CONTENT_TYPE = "application/json;charset=UTF-8";
+//	private static final String APP_HEADER_USER_AGENT = "PocketFans201807/6.0.0 (iPhone; iOS 12.2; Scale/2.00)";
+//	private static final String APP_HEADER_APPINFO = "{\"vendor\":\"apple\",\"deviceId\":\"0\",\"appVersion\":\"6.0.0\",\"appBuild\":\"190409\",\"osVersion\":\"12.2.0\",\"osType\":\"ios\",\"deviceName\":\"iphone\",\"os\":\"ios\"}";
+//	
+//	/**
+//	 * 获取用户信息
+//	 * @throws KeyManagementException
+//	 * @throws NoSuchAlgorithmException
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void getBaseUserInfo() throws KeyManagementException, NoSuchAlgorithmException, IOException {
+//		Https https = new Https();
+//		/* 请求头 */
+//		Map<String, String> requestPropertys = new HashMap<String, String>();
+//		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+//		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+//		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+//		/* 请求参数 */
+//		String payloadJson = "{\"userId\":\"" + 557652 + "\",\"needMuteInfo\":\"True\"}";
+//		String baseUserInfoJson = https.setDataType("POST").setPayloadJson(payloadJson)
+//				.setRequestProperty(requestPropertys).setUrl("https://pocketapi.48.cn/user/api/v1/user/info/home").send();
+//		JSONObject userObject = new JSONObject(baseUserInfoJson);
+//		System.out.println(userObject.toString());
+//	}
+//	
+//	/**
+//	 * 获取成员资料
+//	 * @throws KeyManagementException
+//	 * @throws NoSuchAlgorithmException
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void getMenber() throws KeyManagementException, NoSuchAlgorithmException, IOException {
+//		Https https = new Https();
+//		/* 请求头 */
+//		Map<String, String> requestPropertys = new HashMap<String, String>();
+//		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+//		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+//		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+//		/* 请求参数 */
+//		String payloadJson = "{\"memberId\":\"" + String.valueOf(447924) + "\"}";
+//		/* 发送请求 */
+//		String memberJson = https.setUrl("https://pocketapi.48.cn/user/api/v1/user/star/archives")
+//													.setDataType("POST")
+//													.setRequestProperty(requestPropertys)
+//													.setPayloadJson(payloadJson)
+//													.send();
+//		JSONObject memberObject = new JSONObject(memberJson);
+//		System.out.println(memberObject.toString());
+//	}
+//	
+//	/**
+//	 * 获取token
+//	 * @throws KeyManagementException
+//	 * @throws NoSuchAlgorithmException
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void getToken() throws KeyManagementException, NoSuchAlgorithmException, IOException {
+//		Https https = new Https();
+//		/* 请求头 */
+//		Map<String, String> requestPropertys = new HashMap<String, String>();
+//		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+//		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+//		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+//		requestPropertys.put("appInfo", APP_HEADER_APPINFO);
+//		/* 请求参数 */
+//		String payloadJson = "{\"mobile\":\"\",\"pwd\":\"\"}";
+//		/* 发送请求 */
+//		String loginJson = https.setUrl("https://pocketapi.48.cn/user/api/v1/login/app/mobile")
+//											.setDataType("POST")
+//											.setPayloadJson(payloadJson)
+//											.setRequestProperty(requestPropertys)
+//											.send();
+//		JSONObject loginObject = new JSONObject(loginJson);
+//		System.out.println(loginObject.toString());
+//	}
+//	
+//	/**
+//	 * 获取口袋房间消息
+//	 * @throws KeyManagementException
+//	 * @throws NoSuchAlgorithmException
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void getRoomMessage() throws KeyManagementException, NoSuchAlgorithmException, IOException {
+//		Https https = new Https();
+//		/* 请求头 */
+//		Map<String, String> requestPropertys = new HashMap<String, String>();
+//		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+//		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+//		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+//		requestPropertys.put("token", "6CncBDAr/a2hxgwNxBua+3aADwFck7XBQOzz2mRgHlfhYJt7C2JOtCK0o5kKg68d/mfCP5kzN2k=");
+//		/* 请求参数 */
+//		String payloadJson = "{\"ownerId\":\"327569\",\"needTop1Msg\":\"false\",\"nextTime\":\"0\",\"roomId\":\"67217596\"}";
+//		/* 发送请求 */
+//		String messageJson = https.setDataType("POST")
+//														.setRequestProperty(requestPropertys)
+//														.setPayloadJson(payloadJson)
+//														.setUrl("https://pocketapi.48.cn/im/api/v1/chatroom/msg/list/homeowner")
+//														.send();
+//		JSONObject messageObject = new JSONObject(messageJson);
+//		System.out.println(messageObject.toString());
+//	}
+//	
+//	/**
+//	 * 获取鸡腿翻牌
+//	 * @throws KeyManagementException
+//	 * @throws NoSuchAlgorithmException
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void getFlipcard() throws KeyManagementException, NoSuchAlgorithmException, IOException {
+//		Https https = new Https();
+//		/* 请求头 */
+//		Map<String, String> requestPropertys = new HashMap<String, String>();
+//		requestPropertys.put("Accept", APP_HEADER_ACCEPT);
+//		requestPropertys.put("Content-Type", APP_HEADER_CONTENT_TYPE);
+//		requestPropertys.put("User-Agent", APP_HEADER_USER_AGENT);
+//		requestPropertys.put("token", "6CncBDAr/a2hxgwNxBua+3aADwFck7XBQOzz2mRgHlfhYJt7C2JOtCK0o5kKg68d/mfCP5kzN2k=");
+//		/* 请求参数 */
+//		String payloadJson = "{\"questionId\":\"391203387848069120\",\"answerId\":\"447924\"}";
+//		/* 发送请求 */
+//		String flipcardJson = https.setDataType("POST")
+//														.setRequestProperty(requestPropertys)
+//														.setPayloadJson(payloadJson)
+//														.setUrl("https://pocketapi.48.cn/idolanswer/api/idolanswer/v1/question_answer/detail")
+//														.send();
+//		JSONObject flipcardObject = new JSONObject(flipcardJson);
+//		System.out.println(flipcardObject);
 //	}
 //
 //}

@@ -33,14 +33,14 @@ import com.gnz48.zzt.confing.shiro.listener.ShiroSessionListener;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 
 /**
- * @Description: shiro配置类
+ * @Description: shiro配置类(EhCache)
  * @author JuFF_白羽
  * @date 2018年10月31日 下午5:29:30
  */
 @Configuration
-public class ShiroConfig {
+public class EhCacheShiroConfig {
 
-	private Logger log = LoggerFactory.getLogger(ShiroConfig.class);
+	private Logger log = LoggerFactory.getLogger(EhCacheShiroConfig.class);
 
 	/**
 	 * @Description: 自定义Shiro域
@@ -114,8 +114,8 @@ public class ShiroConfig {
 		// 设置该属性 就不需要设置 ExecutorServiceSessionValidationScheduler
 		// 底层也是默认自动调用ExecutorServiceSessionValidationScheduler
 		sessionManager.setSessionValidationInterval(3600000);
-		//取消url 后面的 JSESSIONID
-	    sessionManager.setSessionIdUrlRewritingEnabled(false);
+		// 取消url 后面的 JSESSIONID
+		sessionManager.setSessionIdUrlRewritingEnabled(false);
 		return sessionManager;
 	}
 

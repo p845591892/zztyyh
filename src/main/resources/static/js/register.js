@@ -88,7 +88,7 @@ $(document).ready(function() {
 			success : function(data) {
 				closeLoad();
 				if (data.status == 200) {
-					layer.confirm(/*"注册成功，请注意查收邮件"*/"注册成功，请联系管理员【QQ：847109667】激活账号和赋权。", {
+					layer.confirm(/*"注册成功，请注意查收邮件"*/"注册成功，请联系管理员【微博@JuFF_白羽】激活账号和赋权。", {
 						icon : 6,
 						title : '提示'
 					}, function(index, layero) {

@@ -27,6 +27,7 @@ import com.gnz48.zzt.entity.system.User;
 import com.gnz48.zzt.exception.shiro.ActivationAccountException;
 import com.gnz48.zzt.repository.system.UserRepository;
 import com.gnz48.zzt.service.WebService;
+import com.gnz48.zzt.util.IpUtil;
 import com.gnz48.zzt.util.MathUtil;
 import com.gnz48.zzt.util.StringUtil;
 
@@ -81,8 +82,11 @@ public class WebContorller {
 	 */
 	@PostMapping("/doLogin")
 	public ModelAndView doLogin(HttpServletRequest request, ModelAndView mav) {
+		log.info(IpUtil.getIpAddr(request));
+		
 		Subject subject = SecurityUtils.getSubject();
 		String username = request.getParameter("username");
+//		String password = request.getParameter("password");
 		String password = StringUtil.shiroMd5(username, request.getParameter("password"));
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 		// 登录失败从request中获取shiro处理的异常信息。
