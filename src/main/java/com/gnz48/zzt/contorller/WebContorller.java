@@ -68,7 +68,7 @@ public class WebContorller {
 	}
 
 	/**
-	 * @Description: 退出的时候是get请求，主要是用于退出
+	 * @Description: 跳转登录页面
 	 * @author JuFF_白羽
 	 */
 	@GetMapping(value = "/login")
@@ -89,9 +89,9 @@ public class WebContorller {
 //		String password = request.getParameter("password");
 		String password = StringUtil.shiroMd5(username, request.getParameter("password"));
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+		mav.addObject("loginName", username);
 		// 登录失败从request中获取shiro处理的异常信息。
 		// ShiroLoginFailure:就是shiro异常类的全类名.
-		
 		try {
 			subject.login(token);
 		} catch (UnknownAccountException unknownAccountException) {

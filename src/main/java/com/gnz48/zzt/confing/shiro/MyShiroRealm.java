@@ -1,6 +1,5 @@
 package com.gnz48.zzt.confing.shiro;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -10,9 +9,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +71,6 @@ public class MyShiroRealm extends AuthorizingRealm {
 			log.info("查询用户异常：{}", e.getMessage());
 		}
 		log.info("认证用户：{}", username);
-		Subject subject = SecurityUtils.getSubject();
-		Session session = subject.getSession();
-		session.setAttribute("loginName", username);
 		if (user == null) {
 			// 用户不存在
 			throw new UnknownAccountException();
