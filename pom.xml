@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.11.3</version>
+			<version>1.15.3</version>
 		</dependency>
 
 		<!-- 动态访问系统本地库（windows） -->
